@@ -6,58 +6,102 @@
 <script>
   import vis from 'vis';
   import { CharacterManagerFormatter } from '../../services/CharacterManagerFormatter'
-  import * as nodes from '../../data/nodes'
+  import * as nodes from '../../data/nodesWithPosition'
   import * as edges from '../../data/edges'
 
+
   export default {
+    data () {
+      return {
+        chart: null
+      }
+    },
     mounted () {
       
       const container = document.getElementById("graphContainer");
       const formatter = new CharacterManagerFormatter(nodes.default, edges.default);
-      const formattedData = formatter.filterByMininalValue(7);
+
+      const MINIMUN_INTERACTION_LEVEL = 0;
+      const formattedData = formatter.filterByMininalValue(MINIMUN_INTERACTION_LEVEL);
       const options = { 
         width: "100%",
         height: "500px",
-        autoResize: true,
-        layout: {
+        //autoResize: true,
+        /*layout: {
           randomSeed: 949842,
-        },
+        },*/
         nodes: {
           color:  "#229db3",
           font: {
-            size: 30,
+            size: 6,
           }
         },
         edges: {
           smooth: false,
         },
+        /*physics: {
+          enabled: false,
+        }*/
+        /*physics: {
+          enabled: true,
+          solver: "forceAtlas2Based",
+          forceAtlas2Based: {
+            theta: 0,
+            centralGravity: 0.002,
+            avoidOverlap: 0.01
+          },
+          stabilization: {
+            enabled: true // This is here just to see what's going on from the very beginning.
+          }
+        }*/
         physics: {
-          barnesHut: { gravitationalConstant: -400000 },
-          stabilization: { iterations: 4500 },
+          barnesHut: { 
+            gravitationalConstant: -400000
+         },
+          stabilization: { 
+            iterations: 4500 
+          },
           hierarchicalRepulsion: {
             centralGravity: 500,
           },
           solver: "barnesHut"
         },
+
       };
-      const nodesDataSet = new vis.DataSet(formattedData.nodes);
-      let chart; 
+      let nodesDataSet = new vis.DataSet(formattedData.nodes);
+      let theChart = null;
       
-      const renderReset = function () {
-        chart = new vis.Network(container, {
-          nodes: nodesDataSet,
-          edges: new vis.DataSet(formattedData.edges)
-        }, options);
-        chart.on("click", chartClick);
-      }
-            
-      //console.log("Cluster", chart.getSeed());
-      const chartClick = function (params) {
-        
-        const connectedNodeIds = chart.getConnectedNodes(params.nodes[0]);
+      theChart = new vis.Network(container, {
+        nodes: nodesDataSet,
+        edges: new vis.DataSet(formattedData.edges)
+      }, options);
+
+      theChart.moveTo({
+        position: {x:0,y:0},
+        scale: 1.0,
+        offset: {x:0,y:0}
+      })
+
+      
+
+      // Capturar os nós renderizados
+      //console.log(theChart.body.nodes)
+      //generateJsonNodesWithPosition(nodesDataSet, theChart.body.nodes);
+      
+      let mustRedrawChart = true;
+
+      theChart.on('afterDrawing', function(){
+        if(mustRedrawChart){
+          mustRedrawChart = false
+          nodesDataSet.update(formattedData.nodes);
+        }
+      })
+
+      theChart.on("click", function (params) {
+        const connectedNodeIds = theChart.getConnectedNodes(params.nodes[0]);
         if(params.nodes.length <= 0) {
-          renderReset();
-          
+          theChart.update(nodesDataSet);
+        
           return;
         }
         const nodesToChange = [];
@@ -70,7 +114,7 @@
             nodesToChange.push({
               color:  "#fe8786",
               font: {
-                size: 35,
+                size: 8,
                 bold: { mod: 'bold'},
               },
               label: nodeToChange.label,
@@ -88,14 +132,9 @@
           
           return nodeToUpdate || oldNodes;
         });
-        chart = new vis.Network(container, {
-          nodes: nodesToUpdate,
-          edges: new vis.DataSet(formattedData.edges)
-        }, options);
-        chart.on("click", chartClick);  
-      }
-      
-      renderReset();
+        nodesDataSet.update(nodesToUpdate);
+
+      });  
     }
   }
 </script>
