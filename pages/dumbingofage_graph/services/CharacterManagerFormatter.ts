@@ -8,7 +8,9 @@ class CharacterManagerFormatter {
   constructor (
     private nodes = new Array<Nodes>(),
     private edges = new Array<Edges>(),
-  )  {}
+  )  {
+    this.nodes = this.setPhysicsNodes(this.nodes);
+  }
   
   filterByMininalValue(minimal: number): Processed {
     const filteredEdges = this.edges.filter( edge => {
@@ -22,6 +24,16 @@ class CharacterManagerFormatter {
       }),
       edges: filteredEdges
     }
+  }
+  
+  setPhysicsNodes(nodes: Nodes[]): Nodes[] {
+    return nodes.map(node => {
+      return {
+        ...node,
+        "physics":false,
+        "fixed":{"x":true,"y":true}
+      }
+    })
   }
   
 }
