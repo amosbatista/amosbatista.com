@@ -48,9 +48,6 @@
       a.link-image(href="/dumbingofage_graph")
         .bg.doa
         p.text-inside dumbing of age - graph
-      a.link-image(href="/censurador")
-        .bg.censurador
-        p.text-inside censure minha música
       a.link-image(href="https://github.com/amosbatista")
         .bg.git
         p.text-inside github
@@ -148,10 +145,6 @@
       background-image: url('../static/pessoal.JPG');
       background-size: cover;
       background-position: left;
-    }
-    
-    .censurador {
-      background-image: url('../pages/censurador/img/export-filtro.png');
     }
     
     .git {
