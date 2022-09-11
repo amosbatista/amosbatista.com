@@ -48,12 +48,12 @@
       a.link-image(href="/dumbingofage_graph")
         .bg.doa
         p.text-inside dumbing of age - graph
-      a.link-image(href="/censurador")
-        .bg.censurador
-        p.text-inside censure minha música
       a.link-image(href="https://github.com/amosbatista")
         .bg.git
         p.text-inside github
+      a.link-image(href="#")
+        .bg.censurador
+        p.text-inside censure minha música
         
     //--.middle
       h1 Amós Batista
@@ -150,10 +150,6 @@
       background-position: left;
     }
     
-    .censurador {
-      background-image: url('../pages/censurador/img/export-filtro.png');
-    }
-    
     .git {
       background-image: url('../static/Octocat.jpg');
       background-position: center;
@@ -163,6 +159,12 @@
       background-image: url('../static/doa_graph.png');
       background-size: cover;
       background-position: center;
+    }
+
+    .censurador {
+      background-image: url('../static/censurador/print-tela-censurador.jpg');
+      background-size: cover;
+      background-position: bottom;
     }
   }
 
