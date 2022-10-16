@@ -51,6 +51,9 @@
       a.link-image(href="https://github.com/amosbatista")
         .bg.git
         p.text-inside github
+      a.link-image(href="#")
+        .bg.censurador
+        p.text-inside censure minha música
         
     //--.middle
       h1 Amós Batista
@@ -156,6 +159,12 @@
       background-image: url('../static/doa_graph.png');
       background-size: cover;
       background-position: center;
+    }
+
+    .censurador {
+      background-image: url('../static/censurador/print-tela-censurador.jpg');
+      background-size: cover;
+      background-position: bottom;
     }
   }
 
