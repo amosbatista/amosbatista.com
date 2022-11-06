@@ -25,7 +25,7 @@
       const formattedData = formatter.filterByMininalValue(MINIMUN_INTERACTION_LEVEL);
       const options = { 
         width: "100%",
-        height: "500px",
+        height: "100%",
         //autoResize: true,
         /*layout: {
           randomSeed: 949842,
@@ -77,8 +77,8 @@
       }, options);
 
       theChart.moveTo({
-        position: {x:0,y:0},
-        scale: 1.0,
+        position: {x:10,y:30},
+        scale: 3.5,
         offset: {x:0,y:0}
       })
 
@@ -141,8 +141,8 @@
 
 <style>
   #graphContainer {
-    width: 99%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     border: 2px solid sandybrown;
   }
 </style>
