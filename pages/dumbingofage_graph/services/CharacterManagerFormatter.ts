@@ -42,7 +42,7 @@ class CharacterManagerFormatter {
       return {
         ...node,
         "physics":false,
-        "fixed":{"x":true,"y":true}
+        "fixed":{"x":false,"y":false}
       }
     })
   }

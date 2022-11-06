@@ -27,9 +27,9 @@
       const BASE_NODE =  {
         color:  "#229db3",
         font: {
-          size: 6,
+          size: 10,
         },
-        opacity: 1,
+        
       };
       const options = { 
         width: "100%",
@@ -80,8 +80,8 @@
       }, options);
 
       theChart.moveTo({
-        position: {x:10,y:30},
-        scale: 3.5,
+        position: {x:10,y:60},
+        scale: 2.0,
         offset: {x:0,y:0}
       })
 
@@ -103,7 +103,7 @@
       theChart.on("click", function (params) {
         const connectedNodeIds = theChart.getConnectedNodes(params.nodes[0]);
         if(params.nodes.length <= 0) {
-          theChart.update(nodesDataSet);
+          nodesDataSet.update(nodesDataSet);
         
           return;
         }
@@ -159,6 +159,5 @@
   #graphContainer {
     width: 100vw;
     height: 100vh;
-    border: 2px solid sandybrown;
   }
 </style>
