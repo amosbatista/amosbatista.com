@@ -6,7 +6,13 @@ interface Edges {
 
 interface Nodes {
   id: number, 
-  label: string, 
+  label?: string, 
+  physics?: boolean,
+  image?: string,
+  fixed?: {
+    "x":boolean,
+    "y":boolean
+  } 
 }
 
 interface Character {

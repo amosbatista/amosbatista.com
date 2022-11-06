@@ -9,7 +9,9 @@ class CharacterManagerFormatter {
     private nodes = new Array<Nodes>(),
     private edges = new Array<Edges>(),
   )  {
-    this.nodes = this.setPhysicsNodes(this.nodes);
+    this.nodes = this.removeLabelIfHaveImage(
+      this.setPhysicsNodes(this.nodes)
+    );
   }
   
   filterByMininalValue(minimal: number): Processed {
@@ -24,6 +26,15 @@ class CharacterManagerFormatter {
       }),
       edges: filteredEdges
     }
+  }
+
+  removeLabelIfHaveImage(nodes: Nodes[]): Nodes[] {
+    return nodes.map(node => {
+      return {
+        ...node,
+        "label": node.image ? "" : node.label
+      }
+    })
   }
   
   setPhysicsNodes(nodes: Nodes[]): Nodes[] {
