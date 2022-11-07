@@ -23,19 +23,22 @@
 
       const MINIMUN_INTERACTION_LEVEL = 0;
       const formattedData = formatter.filterByMininalValue(MINIMUN_INTERACTION_LEVEL);
+
+      const BASE_NODE =  {
+        color:  "#229db3",
+        font: {
+          size: 10,
+        },
+        
+      };
       const options = { 
         width: "100%",
-        height: "500px",
+        height: "100%",
         //autoResize: true,
         /*layout: {
           randomSeed: 949842,
         },*/
-        nodes: {
-          color:  "#229db3",
-          font: {
-            size: 6,
-          }
-        },
+        nodes: BASE_NODE,
         edges: {
           smooth: false,
         },
@@ -77,8 +80,8 @@
       }, options);
 
       theChart.moveTo({
-        position: {x:0,y:0},
-        scale: 1.0,
+        position: {x:10,y:60},
+        scale: 2.0,
         offset: {x:0,y:0}
       })
 
@@ -100,7 +103,7 @@
       theChart.on("click", function (params) {
         const connectedNodeIds = theChart.getConnectedNodes(params.nodes[0]);
         if(params.nodes.length <= 0) {
-          theChart.update(nodesDataSet);
+          nodesDataSet.update(nodesDataSet);
         
           return;
         }
@@ -121,7 +124,8 @@
               shape: nodeToChange.shape,
               image: nodeToChange.image,
               id: nodeToChange.id,
-              opacity: 0.7
+              opacity: 0.7,
+              isConnected: true,
             });  
           }
         });
@@ -130,9 +134,21 @@
             return nodeToUpdate.id == oldNodes.id
           });
           
-          return nodeToUpdate || oldNodes;
+          return nodeToUpdate || {
+              color:  BASE_NODE.color,
+              font: BASE_NODE.font,
+              label: oldNodes.label,
+              shape: oldNodes.shape,
+              image: oldNodes.image,
+              id: oldNodes.id,
+              opacity: BASE_NODE.opacity,
+              isConnected: false,
+            };
         });
-        nodesDataSet.update(nodesToUpdate);
+        const orderedNodesToUpdate = nodesToUpdate.sort((nodeA, nodeB) => {
+          return (nodeB.isConnected == true != nodeA.isConnected )
+        });
+        nodesDataSet.update(orderedNodesToUpdate);
 
       });  
     }
@@ -141,8 +157,7 @@
 
 <style>
   #graphContainer {
-    width: 99%;
-    height: 100%;
-    border: 2px solid sandybrown;
+    width: 100vw;
+    height: 100vh;
   }
 </style>
