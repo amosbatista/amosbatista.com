@@ -26,44 +26,44 @@
         },
         portfolios: [
           {
-            title: "Migração Kofax Capture",
+            title: "Kofax Capture Migration",
             type: 'Refatoração', 
-            resume: "Remodelação dos processos de digitalização na Iron Mountain do Brasil",
+            resume: "(portuguese) Rebuild of digitalization work process in Iron Mountain do Brasil",
             url: "/portfolio/kofaxCapture"
           },
 
           {
             title: "MasterRow",
             type: 'Framework', 
-            resume: "Ferramenta escrita em puro JavaScript para criação de tabelas dinâmicas",
+            resume: "(portuguese) Vanilla-javascript tool for dinamyc tables",
             url: "/portfolio/masterrow"
           },
 
           {
             title: "AmosBatista.com",
             type: 'Website', 
-            resume: "Criação do meu site para divulgação profissional.",
+            resume: "(portuguese) My professional website.",
             url: "/portfolio/amosBatista"
           },
 
           {
             title: "E-htl Executivo",
             type: 'Aplicativo', 
-            resume: "Desenvolvimento de aplicativo de gestão de carteira de clientes na área de turismo. ",
+            resume: "(portuguese) Client managment app for turism. ",
             url: "/portfolio/ehtlexecutivo"
           },
 
           {
             title: "E-htl Dashboard",
             type: 'Website interno', 
-            resume: "Criação de dashboard para acompanhamento de métricas importantes, desde vendas até funcionamento de instâncias AWS. ",
+            resume: "(portuguese) Development of corporative dashboard, for sales analisys and AWS comsume. ",
             url: "/portfolio/ehtldashboard"
           },
 
           {
             title: "Catho 2.0",
-            type: 'Aplicativo', 
-            resume: "Criação da nova versão do aplicativo. Comunicação entre o candidato e o recrutador, e recebimento de convites de entrevistas.",
+            type: 'Aplicativo',            
+            resume: "(portuguese) Development of Catho's app comunication between candidate and recruiter. ",
             url: "/portfolio/cathoApp"
           }
         ]
@@ -87,7 +87,7 @@
           <p class="title">
             {{post.title}}
           </p>
-          <p>
+          <p class="normal">
             {{post.resume}}
           </p>
         </my-link>
@@ -105,15 +105,30 @@
   @import '../../assets/mixin.less';
   @import '../../assets/objects.less';
 
+  @media(min-width: 768px) {
+    .list {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-around;
+
+      .item {
+        width: 350px;
+      }
+    }
+    
+  }
+  
   .item {
-    margin-bottom: 32px;
+    margin-bottom: 32px;  
   }
 
   .title {
     font-size: 120%;
   }
-  p {
+  p.normal {
    font-size: 75%;
+   color: @color-primary-light;
    margin: 0; 
   }
 

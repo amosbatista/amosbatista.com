@@ -82,7 +82,7 @@
             </div>
 
             <div class="paragraph" slot="source">
-                <big-link url="https://play.google.com/store/apps/details?id=br.com.catho.app.vagas.empregos" />
+                <big-link url="https://www.catho.com.br/vagas" iconClass="fa fa-globe" />
                 
             </div>
 

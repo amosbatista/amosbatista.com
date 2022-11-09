@@ -15,7 +15,7 @@
 <template>
     
     <div class="topic">
-        <h3 class="title">{{title}}</h3>
+        <h3 class="title topic-title">{{title}}</h3>
         <div class="content">
             <slot>
             </slot>
@@ -35,11 +35,13 @@
         padding: 10px;
         display: inline-block;
 
-        .title{
+        .topic-title{
             font-family: @title-font;
             text-transform: lowercase;
             color: @color-primary-light;
             padding-left: 20px;
+            font-size: 150%;
+            letter-spacing: -1px;
         }
         .content{
             padding-left: 10px;
@@ -47,13 +49,14 @@
         }
 
         @media (min-width: 768px){
+            margin: 0 0 30px 0;
 
-            .title{
+            .topic-title{
                 float: left;
-                width: 25%;
                 margin: 0;
                 text-align: right;
                 padding-left: 20px;
+                max-width: 25%;
             }
 
             .content{

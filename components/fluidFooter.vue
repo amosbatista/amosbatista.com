@@ -28,10 +28,11 @@
 <template lang="pug">
 
   .fluid-footer
-    a.link(v-for="link in links" :href="link.url")
-      |{{link.text}} / 
-    span.link
-      | obrigado pela visita
+    a.link(v-for="(link, key) in links" :href="link.url")
+      |{{key > 0 ? "  /   " : ""}} {{link.text}}  
+    br
+    span.link.thanks
+      |obrigado pela visita
 
         
 </template>
@@ -55,6 +56,10 @@
           font-size: 100%;
           letter-spacing: -1px;
           font-weight: @base-font-weigh-bold;
+      }
+
+      .thanks {
+        font-size: 50%;
       }
   }
     
