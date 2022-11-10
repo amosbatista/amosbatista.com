@@ -7,7 +7,7 @@
         data: function () {
             return {}
         },
-        props: ["url"],
+        props: ["url", "iconClass"],
         components: { titleParagraph }
     }
 
@@ -20,7 +20,7 @@
 
         <div class="icon">
 
-            <i class="fab fa-github" />
+            <i :class="iconClass" />
         </div>
 
         <div class="url">
@@ -39,16 +39,18 @@
     .git-hub-color{
 
         .icon{
-            background-color: @color-github;
-            color: @color-base;
+            color: @color-primary;
         }
         .url{
-            color: @color-github;
+            color: @color-primary;
         }
     }
 
     .big-link{
-        max-width: 500px;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-around;
 
         .icon{
             padding: 20px 10px;
@@ -58,7 +60,10 @@
             padding: 20px 10px;
             font-size: 50%;
             display: inline-block;
-            width: 60%;
+
+            .title {
+                padding: 0;
+            }
         }
     }
 

@@ -26,17 +26,15 @@
 
     .my-link{
         width: 100%;
-
-        /*a{
-            text-decoration: underline;
-            text-decoration-style: dashed;
-            text-decoration-color: @color-secundary;
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        text-decoration-color: @color-primary;
 
 
-            &:hover{
-                text-decoration-style: dotted;
-            }
-        }*/
+        &:hover{
+            text-decoration-style: dotted;
+        }
+
     }
 
 </style>

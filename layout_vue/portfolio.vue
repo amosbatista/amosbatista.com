@@ -1,6 +1,5 @@
 <script>
 
-    import post from '../components/post-title.vue'
     import topic from '../components/topic.vue'
     import pgHeader from '../components/pageSimpleHeader-portfolio.vue'
     import myLink from '../components/myLink.vue'
@@ -12,7 +11,7 @@
     export default {
 
         components: {
-            post, pgHeader, topic, myLink, vueMeta, linkStyle, facebookApp, pgFooter
+            pgHeader, topic, myLink, vueMeta, linkStyle, facebookApp, pgFooter
         },
 
         props: ['title', 'description', 'meta', 'repoUrl'],
@@ -37,51 +36,51 @@
         <pg-header />
 
 
-        <div class="title">
-            <post :title="title" resume="" />
-        </div>
+        
+        <h1 class="title title-portfolio">{{title}}</h1>
+        
 
         <div class="topics">
 
             <topic title="O que é?">
                 <div class="topic-content">
-                    <slot name="whatsIsThis" />
+                    <slot name="whatsIsThis"></slot>
                 </div>
             </topic>
 
             <topic title="A Necessidade">
                 <div class="topic-content">
-                    <slot name="necessity" />
+                    <slot name="necessity"></slot>
                 </div>
             </topic>
 
             <topic title="Concorrentes">
                 <div class="topic-content">
-                    <slot name="competitor" />
+                    <slot name="competitor"></slot>
                 </div>
             </topic>
 
             <topic title="O conceito">
                 <div class="topic-content">
-                    <slot name="concept" />
+                    <slot name="concept"></slot>
                 </div>
             </topic>
 
             <topic title="O desenvolvimento">
                 <div class="topic-content">
-                    <slot name="development" />
+                    <slot name="development"></slot>
                 </div>
             </topic>
 
             <topic title="Retrô">
                 <div class="topic-content">
-                    <slot name="retro" />
+                    <slot name="retro"></slot>
                 </div>
             </topic>
 
             <topic title="Fonte">
                 <div class="topic-content">
-                    <slot name="source" />
+                    <slot name="source"></slot>
                 </div>
             </topic>
         </div>
@@ -102,11 +101,16 @@
     @import '../assets/base.less';
     @import '../assets/objects.less';
 
+    .portfolio-layout{
+        .title-portfolio{
+            margin: 100px 0;
+        }
+    }
+
     .topic-content{
       font-family: @base-font;
       color: @color-primary;
       margin: 0;
-
     
       p{
           margin: 0 0 10px 0;

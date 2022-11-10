@@ -20,7 +20,6 @@
 <template lang="pug">
 
     footer
-        creative-commons
         de-facto
 
 </template>
