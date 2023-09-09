@@ -61,24 +61,9 @@
     li Cume
     li ---
     li ---
-  
-  #disqus_thread
-  script.
-    //-RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-    //- LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
-    /**
-  
-    var disqus_config = function () {
-      this.page.url = 'https://amosbatista.com/sketchtember2023';  // Replace PAGE_URL with your page's canonical URL variable
-      this.page.identifier = 'sketchtember2023_pt'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-    };
-    */
-    (function() { // DON'T EDIT BELOW THIS LINE
-    var d = document, s = d.createElement('script');
-    s.src = 'https://amosbatista.disqus.com/embed.js';
-    s.setAttribute('data-timestamp', +new Date());
-    (d.head || d.body).appendChild(s);
-    })();
+
+  .comments
+    #disqus_thread
 
 </template>
 
@@ -123,8 +108,10 @@
     p {
       margin: 0 0 15px;
     }
-    
-    
+  }
+
+  .comments {
+    width: 75%;
   }
 </style>
 
@@ -141,6 +128,19 @@
     components: { 
       vueMeta,
       facebookApp, 
+    },
+    mounted() {
+      var disqus_config = function () {
+        this.page.url ='sdsd';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'sdds'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+      
+      (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://sunday6pm.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+      })();
     },
 
     async asyncData () {
