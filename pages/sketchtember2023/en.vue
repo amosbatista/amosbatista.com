@@ -7,58 +7,58 @@
 
   .description
     p
-      | Este ano, vou participar do Sketchtember 2023. 
-      | Não sei se está organizado em algum outro site. Por este motivo, estou lançando meus próprios prompts, me comprometendo a criar uma obra para eles.
+      | I'm participating Sketchtember 2023.
+      | I don't know if somebody is keeping this in other place. So, I'm lauching my own prompts.
     
-    h2 Onde será publicado?
-    p Estou centralizando na minha conta do Mastodon. Acompanhe os trabalhos dentro 
+    h2 Where it will be published?
+    p I'm putting all my works in my Mastodon Account, inside
       a(href="https://ursal.zone/tags/sketchtember2023")
-        |da hashtag #Sketchtember2023
+        |#Sketchtember2023 hashtag
     
-    h2 Regras
-    p As regras se baseiam nas do servidor da Ursal: 
+    h2 Rules
+    p Rules are shared with URSAL's server rules: 
     ul
-      li Coloque descrição em todas as imagens.
-      li Coloque aviso de conteúdo em caso de imagem para adultos (NSFW)
+      li Put description in all media.
+      li Set Content Warning in NSFW work
 
-    p Demais regras:
+    p Other rules:
     ul
-      li A lista não é obrigação, é mais para nos incentivar a desenhar. Se não puder todo dia, desenhe um dia sim outro não, ou uma vez por semana.
-      li O sketchtember trata de rascunhos. Mesmo se precisar de tinta, pense neste detalhe.
-      li Compare com seu trabalho de ontem, antes de se comparar com outres artistes. Seja gentil com você.
+      li List is not obligatory, it's just for incentive to drawing. If you can't do it all day, create in alternate days, or once per week.
+      li Sketchtember is about sketching. No need to art-finalize.
+      li Compare your work with yourself yesterday, before compare with other artists. Be kind to yourself.
   
     
     h2 prompts
 
   ol(type="1")
-    li Mãos
-    li Limpo
-    li Sujeira
-    li Papagaio
-    li Explanar
-    li Minguante
-    li Anarquia
-    li Querida
-    li Curva
-    li Encaixe
-    li Fios
-    li Altivo
-    li Penumbra
-    li Pressa
-    li Nevoeiro
+    li Hands
+    li Clear
+    li Dirt
+    li Parrot
+    li Explain
+    li New Moon
+    li Anarquy
+    li Darling
+    li Curve
+    li Socket
+    li Threads
+    li Arrogant
+    li Twilight
+    li Hurry
+    li Fog
     li Chocolate
-    li Trilha
-    li Forja
-    li Tendão
-    li Fofoca
-    li Caranguejo
-    li Fagulha
-    li Constelação
-    li Represa
-    li Orelha
-    li Cravejado
-    li Respirar
-    li Cume
+    li Trail
+    li Forge
+    li Tendon
+    li Gossip
+    li Crab
+    li Spark
+    li Constelation
+    li Dam
+    li Ear
+    li Studded
+    li Breath
+    li Top
     li ---
     li ---
 
@@ -69,14 +69,10 @@
 
 <style lang="less">
   .sketchtember {
-    padding: 10px 75px;
+    padding: 10px 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    @media(min-width: 500px) {
-      padding: 10px 15px;
-    }
   }
   h1 {
     font-family: 'Permanent Marker';
@@ -135,8 +131,8 @@
     },
     mounted() {
       var disqus_config = function () {
-        this.page.url ='https://amosbatista.com/sketchtember2023';  // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = 'sketchtember2023-pt'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        this.page.url ='https://amosbatista.com/sketchtember2023/en';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'sketchtember2023-en'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
       };
       
       (function() { // DON'T EDIT BELOW THIS LINE
