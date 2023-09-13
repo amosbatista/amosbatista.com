@@ -61,6 +61,9 @@
     li Top
     li ---
     li ---
+  
+  .entries
+    entries
 
   .comments
     #disqus_thread
@@ -118,6 +121,7 @@
 <script>
   import vueMeta from '../../components/meta.vue'
   import facebookApp from '../../components/facebook-app.vue'
+  import entries from './entries.vue'
 
   export default {
 
@@ -127,7 +131,8 @@
     },
     components: { 
       vueMeta,
-      facebookApp, 
+      facebookApp,
+      entries 
     },
     mounted() {
       var disqus_config = function () {
