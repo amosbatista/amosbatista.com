@@ -59,8 +59,8 @@
     li Cravejado
     li Respirar
     li Cume
-    li ---
-    li ---
+    li Pato
+    li Chanfrado
 
   .entries
     entries

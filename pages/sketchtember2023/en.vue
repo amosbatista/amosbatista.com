@@ -59,8 +59,8 @@
     li Studded
     li Breath
     li Top
-    li ---
-    li ---
+    li Duck
+    li Beveled
   
   .entries
     entries
