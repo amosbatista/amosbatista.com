@@ -1,97 +1,176 @@
-,<template>
-	
-	<div class="container">
+<script>
+
+  import vueMeta from '../components/meta.vue'
+  import linkStyle from '../components/external-link-style.vue'
+  import facebookApp from '../components/facebook-app.vue'
+
+  export default {
+
+    data () { 
+      return {
+      }
+    },
+    components: { 
+      vueMeta,
+      facebookApp, 
+      linkStyle,
+    },
+
+    async asyncData () {
+      
+
+      return {
+        meta: {
+          title: "Home",
+          description: "Site pessoal.",
+          thumbnail: "",
+          url: ``,
+          type: "home"
+        },
+      }
+    }
+  }
+
+</script>
+
+<template lang="pug">
+
+  .home-page
+
+    vue-meta(:metadata="meta")
+    facebook-app
+    link-style
+    
+    .full-page
+      a.link-image(href="#")
+        .bg.me
+        p.text-inside amosBatista.com
+      a.link-image(href="/dumbingofage_graph")
+        .bg.doa
+        p.text-inside dumbing of age - graph
+      a.link-image(href="https://github.com/amosbatista")
+        .bg.git
+        p.text-inside github
+      a.link-image(href="#")
+        .bg.censurador
+        p.text-inside censure minha música
         
-        <layout 
-            :links="links" 
-            :meta="meta"
-        >
+    //--.middle
+      h1 Amós Batista
+      a.link(href="/censurador") Censure minha música
+      a.link(href="https://github.com/amosbatista") github
+      a.link(href="mailto:amos.silva@gmail.com") amos.silva@gmail.com
+    
 
-            <h1 class="title" slot="home-header">
-                <span class="comment-chars">
-                    //
-                </span>
-                Amós Batista
-            </h1>
 
-            <div class="animation" slot="home-outro">
-                <animation />
-            </div>
-        </layout>
-    </div>
 </template>
 
-<script>
-	import post from '../components/post-title.vue'
-    import box from '../components/box.vue'
-    import layout from '../layout_vue/6colLayout.vue'
-    import animation from '../components/animatedBg_linesToCenter.vue'
-
-	export default {
-	  data: () => {
-	  	return {
-            meta: {
-                title: "Home",
-                description: "Site pessoal, de projetos e portfólios.",
-                thumbnail: "thumbnails/home.jpg",
-                url: "",
-                type: "home"
-            },
-	  		links: [
-                /*{
-                    title: "Sobre",
-                    description: "",
-                    url: "/about"
-                },*/
-                {
-                    title: "Blog",
-                    description: "",
-                    url: "/blog"
-                },
-               	{
-                	title: "Portfolio",
-                    description: "",
-                    url: "/portfolio"
-               	},
-                /*{
-                    title: "Galeria",
-                    description: "",
-                    url: "/gallery"
-                }*/
-            ]
-        }
-	  },
-	  components: {
-		post, box, layout, animation
-      }
-	}
-</script>
 
 
 <style lang="less">
+  
+  @import '../assets/generic.less';
+  @import '../assets/variables.less';
+  @import '../assets/mixin.less';
+  @import '../assets/objects.less';
+  @import '../assets/base.less';
+  
+  @imagePercentage: 25%;
 
-    @import '../assets/variables.less';
-    @import '../assets/mixin.less';
-    @import '../assets/generic.less';
-    @import '../assets/base.less';
-    @import '../assets/objects.less';
+  .home-page {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    height: 100vh;
+  }
 
-    .title{
-        font-family: @title-font;
-        text-transform: uppercase;
-        margin: 0;
-        line-height: 1;
-        color: @color-primary;
-        font-size: 200%;
+  .full-page {
+    width: 100vw;
+    height: 100vh; 
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    
+    @media (orientation: portrait) {
+      flex-direction: column;
     }
-
-    .comment-chars{
-        color: @color-secundary;
-    }
-
-    .animation{
+    
+    .link-image {
+      width: @imagePercentage;
+      height: 100vh;
+      background-position: center;
+      position: relative;
+      
+      display: flex;
+      align-content: center;
+      align-items: center;
+      flex-direction: row;
+      
+      &:hover .bg {
+        filter: blur(5px) grayscale(0.5) brightness(0.4);  
+      }
+      
+      &:hover .text-inside {
+        filter: blur(0px);
+      }
+      
+      @media (orientation: portrait) {
         width: 100%;
-        height: 100%;
+      }
     }
+    .text-inside, .bg {
+      transition: filter 0.4s ease;
+    }
+    .text-inside {
+      font-family: @base-font;
+      color: @color-terciary;
+      filter: blur(5px);
+      font-size: 110%;
+      text-decoration: none;
+      margin: 0;
+      display: inline-block;
+      
+      &:visited {
+        text-decoration: none;
+      }
+    }
+    
+    .bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -5;
+    }
+    
+    .me {
+      background-image: url('../static/pessoal.JPG');
+      background-size: cover;
+      background-position: left;
+    }
+    
+    .git {
+      background-image: url('../static/Octocat.jpg');
+      background-position: center;
+    }
+    
+    .doa {
+      background-image: url('../static/doa_graph.png');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .censurador {
+      background-image: url('../static/censurador/print-tela-censurador.jpg');
+      background-size: cover;
+      background-position: bottom;
+    }
+  }
+
+  .link {
+    font-family: @base-font;
+    color: @color-secundary;
+  }
 
 </style>
