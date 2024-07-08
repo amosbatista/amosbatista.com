@@ -1,10 +1,64 @@
-<script setup>
-  import { onMounted } from 'vue'
+<script setup lang="ts">
+  
+  import { onMounted, reactive } from 'vue'
   import vis from 'vis';
+  import { Graph } from './api/graph';
 
   let container, theChart;
-  const getPosition = () => {
-    console.log('foo', theChart.getPositions())
+  const formState = reactive({
+    newLabel: '',
+    newId: 0,
+    exported: ''
+  });
+
+  const nodes = [{
+    id: 1,
+    label: 'Joyce',
+    "x": 1,
+    "y": 2
+  }, {
+    id: 2,
+    label: 'Becky',
+    "x": 3,
+    "y": 5
+  }, {
+    id: 4,
+    label: 'Jacob',
+    "x": 6,
+    "y": 6
+  }, {
+    id: 5,
+    label: 'Anna',
+    "x": 10,
+    "y": 5
+  }];
+
+  const edges = [{
+    from: 1,
+    to: 2
+  }, {
+    from: 4,
+    to: 1
+  }, {
+    from: 5,
+    to: 1
+  }]
+
+ const graph = new Graph(edges, nodes)
+ useState('graphData', () => (graph.get()))
+
+  const getPosition = (state) => {
+    const stateFrom = useState('graphData').value as IVis
+    const graph = new Graph(stateFrom.edges, stateFrom.nodes)
+    const newPositions = { nodes: theChart.getPositions() }
+    graph.updatedCoordinatesFromVis(newPositions)
+    state.exported = graph.toString();
+  }
+
+  const getSelected = (state) => {
+    const stateFrom = useState('graphData').value as IVis
+    const graph = new Graph(stateFrom.edges, stateFrom.nodes)
+    debugger
   }
 
   onMounted(() => {
@@ -28,22 +82,10 @@
         enabled: false,
       },
     };
+    useState('graphData');
+
     const dataToGraph = {
-      nodes: [{
-        "id":1,
-        "label":"becky",
-        "fixed": false,
-        "physics": false,
-        "x": 666,
-        "y": 666
-      },{
-        "id":2,
-        "label":"joyce",
-      }, {
-        "id":24,
-        "label":"joe",
-      }],
-        edges: [{"from":2,"to":1,"value":1}]
+      nodes, edges
       }
       let nodesDataSet = new vis.DataSet(dataToGraph.nodes);
       theChart = null;
@@ -66,8 +108,14 @@
   <div class="graph">
     <div id="graphContainer"></div>
   </div>
-  <form>
-    <button type="button" @click="getPosition()">show current position nodes</button>
+  <form :state="formState">
+    <button type="button" @click="getPosition(formState)">show current position nodes</button>
+    <button type="button" @click="getSelected(formState)">show current selected</button>
+
+    ID: <input :value="formState.newId">
+    Label: <input :value="formState.newLabel">
+
+    <textarea :value="formState.exported"></textarea>
   </form>
 </template>
 

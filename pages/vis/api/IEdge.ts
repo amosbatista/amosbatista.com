@@ -1,6 +1,5 @@
-import { INode } from "./INode";
+import { type INode } from "./INode";
 
 export interface IEdge {
-  node1: INode;
-  node2: INode;
+  nodes: INode[];
 }
