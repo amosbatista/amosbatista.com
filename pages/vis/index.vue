@@ -34,11 +34,14 @@
         "label":"becky",
         "fixed": false,
         "physics": false,
-        "x": 1,
-        "y": 1
+        "x": 666,
+        "y": 666
       },{
         "id":2,
         "label":"joyce",
+      }, {
+        "id":24,
+        "label":"joe",
       }],
         edges: [{"from":2,"to":1,"value":1}]
       }
