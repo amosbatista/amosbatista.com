@@ -26,8 +26,10 @@ export class Graph {
   addNodeFromAnother(newNode: IVisNode, nodeToLink: number) {
     this.nodes.push(newNode);
     this.edges.push({
-      from: nodeToLink,
-      to: newNode.id
+      from: newNode.id,
+      to: nodeToLink,
+      id: undefined,
+      value: 1
     })
   }
 

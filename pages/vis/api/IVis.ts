@@ -14,12 +14,14 @@ export interface IVisNodesPosition {
 
 export interface IVisEdge {
   from: number,
-  to: number
+  to: number,
+  id?: number,
+  value?: number
 }
 
 export interface IVisNode {
   id: number,
   label: string,
   x: number,
-  y: number
+  y: number,
 }

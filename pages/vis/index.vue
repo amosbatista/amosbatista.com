@@ -1,17 +1,17 @@
 <script setup lang="ts">
   
-  import { onMounted, reactive } from 'vue'
+  import { onMounted, ref } from 'vue'
   import vis from 'vis';
   import { Graph } from './api/graph';
 
-  let container, theChart, nodesDataSet;
+  let container, theChart, nodesDataSet, edgesDataSet;
   
-  const formState = reactive({
-    newLabel: '',
-    currenctSelected: 0,
-    exported: '',
-    graphData: {}
-  });
+  const newLabel = ref('');
+  const exported = ref('')
+  const graphData = ref({})
+
+  const currentSelected = ref(0);
+  const newId = ref(0);
 
   const nodes = [{
     id: 1,
@@ -37,41 +37,45 @@
 
   const edges = [{
     from: 1,
-    to: 2
+    to: 2,
+    value: 1
   }, {
     from: 4,
-    to: 1
+    to: 1,
+    value: 1
   }, {
     from: 5,
-    to: 1
+    to: 1,
+    value: 1
   }]
 
- const graph = new Graph(edges, nodes)
- formState.graphData = graph.get()
+ let graph = new Graph(edges, nodes)
+ graphData.value = graph.get()
 
-  const getPosition = (state) => {
-    const stateFrom = state.graphData as IVis
+  const getPosition = () => {
+    const stateFrom = graphData.value as IVis
     const graph = new Graph(stateFrom.edges, stateFrom.nodes)
     const newPositions = { nodes: theChart.getPositions() }
     graph.updatedCoordinatesFromVis(newPositions)
-    state.exported = graph.toString();
+    exported.value = graph.toString();
+
+    
   }
 
-  const getSelected = (state) => {
-    const stateFrom = state.graphData as IVis
-    const graph = new Graph(stateFrom.edges, stateFrom.nodes)
+  const getSelected = () => {
     const FIRST_NODE = 0;
-    state.currenctSelected = theChart.getSelection().nodes[FIRST_NODE] ;
+    currentSelected.value = theChart.getSelection().nodes[FIRST_NODE] ;
   }
 
-  const addLabel = (state) => {
+  const addLabel = () => {
     const newNode = {
-      id: state.newId,
-      label: state.newLabel,
-      x: 200,
-      y: 200
+      id: parseInt(newId.value),
+      label: newLabel.value,
+      x: 20,
+      y: 20,
     }
-    graph.addNodeFromAnother(newNode, state.currentSelected + 1)
+    graph.addNodeFromAnother(newNode, currentSelected.value)
+    edgesDataSet.update(graph.getEdges())
     nodesDataSet.update(graph.getNodes())
   }
 
@@ -102,11 +106,12 @@
       nodes, edges
     }
     nodesDataSet = new vis.DataSet(dataToGraph.nodes);
+    edgesDataSet = new vis.DataSet(dataToGraph.edges)
     theChart = null;
       
       theChart = new vis.Network(container, {
         nodes: nodesDataSet,
-        edges: new vis.DataSet(dataToGraph.edges)
+        edges: edgesDataSet
       }, options);
 
       theChart.moveTo({
@@ -122,15 +127,17 @@
   <div class="graph">
     <div id="graphContainer"></div>
   </div>
-  <form :state="formState">
-    <button type="button" @click="getPosition(formState)">show current position nodes</button>
-    <button type="button" @click="getSelected(formState)">show current selected</button>
-    <button type="button" @click="addLabel(formState)">add</button>
+  <form>
+  {{ newLabel }}
+    <button type="button" @click="getPosition()">show current position nodes</button>
+    <button type="button" @click="getSelected()">show current selected</button>
+    <button type="button" @click="addLabel()">add</button>
 
-    ID: <input :value="formState.currenctSelected">
-    Label: <input :value="formState.newLabel">
+    ID: <input v-model="currentSelected">
+    NewId: <input v-model="newId">
+    Label: <input v-model="newLabel">
 
-    <textarea :value="formState.exported"></textarea>
+    <textarea v-model="exported"></textarea>
   </form>
 </template>
 

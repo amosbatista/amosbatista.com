@@ -6,7 +6,7 @@ describe ('graphs', () => {
   it('deve retornar um grafo', () => {
     const edge1: IVisEdge = {
       from: 1,
-      to: 2
+      to: 2,
     }
 
     const edge2: IVisEdge = {
@@ -168,8 +168,10 @@ describe ('graphs', () => {
     graph.addNodeFromAnother(newNode, selected);
 
     expect(graph.getEdges()[2]).toEqual({
-      from: 1,
-      to: 6   
+      from: 6,
+      to: 1,
+      "id": undefined,
+      value: 1
     })
     expect(graph.getNodes()[3]).toEqual({ 
       id: 6,
