@@ -4,11 +4,13 @@
   import vis from 'vis';
   import { Graph } from './api/graph';
 
-  let container, theChart;
+  let container, theChart, nodesDataSet;
+  
   const formState = reactive({
     newLabel: '',
-    newId: 0,
-    exported: ''
+    currenctSelected: 0,
+    exported: '',
+    graphData: {}
   });
 
   const nodes = [{
@@ -45,10 +47,10 @@
   }]
 
  const graph = new Graph(edges, nodes)
- useState('graphData', () => (graph.get()))
+ formState.graphData = graph.get()
 
   const getPosition = (state) => {
-    const stateFrom = useState('graphData').value as IVis
+    const stateFrom = state.graphData as IVis
     const graph = new Graph(stateFrom.edges, stateFrom.nodes)
     const newPositions = { nodes: theChart.getPositions() }
     graph.updatedCoordinatesFromVis(newPositions)
@@ -56,9 +58,21 @@
   }
 
   const getSelected = (state) => {
-    const stateFrom = useState('graphData').value as IVis
+    const stateFrom = state.graphData as IVis
     const graph = new Graph(stateFrom.edges, stateFrom.nodes)
-    debugger
+    const FIRST_NODE = 0;
+    state.currenctSelected = theChart.getSelection().nodes[FIRST_NODE] ;
+  }
+
+  const addLabel = (state) => {
+    const newNode = {
+      id: state.newId,
+      label: state.newLabel,
+      x: 200,
+      y: 200
+    }
+    graph.addNodeFromAnother(newNode, state.currentSelected + 1)
+    nodesDataSet.update(graph.getNodes())
   }
 
   onMounted(() => {
@@ -86,9 +100,9 @@
 
     const dataToGraph = {
       nodes, edges
-      }
-      let nodesDataSet = new vis.DataSet(dataToGraph.nodes);
-      theChart = null;
+    }
+    nodesDataSet = new vis.DataSet(dataToGraph.nodes);
+    theChart = null;
       
       theChart = new vis.Network(container, {
         nodes: nodesDataSet,
@@ -111,8 +125,9 @@
   <form :state="formState">
     <button type="button" @click="getPosition(formState)">show current position nodes</button>
     <button type="button" @click="getSelected(formState)">show current selected</button>
+    <button type="button" @click="addLabel(formState)">add</button>
 
-    ID: <input :value="formState.newId">
+    ID: <input :value="formState.currenctSelected">
     Label: <input :value="formState.newLabel">
 
     <textarea :value="formState.exported"></textarea>

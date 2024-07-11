@@ -118,4 +118,64 @@ describe ('graphs', () => {
       x: 895
     }])
   });
+
+
+  it('deve adicionar um nó à partir de um outro nó',  () => {
+    const edge1: IVisEdge = {
+      from: 1,
+      to: 2
+    }
+
+    const edge2: IVisEdge = {
+      from: 3,
+      to: 2
+    }
+
+    const node1: IVisNode = { 
+      id: 1,
+      label: 'node1',
+      y: 5,
+      x: 0
+    };
+
+    const node2: IVisNode = { 
+      id: 2,
+      label: 'node2',
+      y: 3,
+      x: 10
+    }
+
+    const node3: IVisNode = { 
+      id: 3,
+      label: 'node3',
+      y: 30,
+      x: 67
+    }
+
+
+    const graph = new Graph(
+      [edge1, edge2],
+      [node1, node2, node3]
+    ) 
+
+    const newNode: IVisNode = { 
+      id: 6,
+      label: 'new Node',
+      y: 50,
+      x: 111
+    };
+    const selected = 1;
+    graph.addNodeFromAnother(newNode, selected);
+
+    expect(graph.getEdges()[2]).toEqual({
+      from: 1,
+      to: 6   
+    })
+    expect(graph.getNodes()[3]).toEqual({ 
+      id: 6,
+      label: 'new Node',
+      y: 50,
+      x: 111
+    })
+  })
 });
