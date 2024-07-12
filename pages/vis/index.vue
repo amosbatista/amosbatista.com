@@ -2,7 +2,7 @@
   
   import { onMounted, ref } from 'vue'
   import vis from 'vis';
-  import { Graph } from './api/graph';
+  import { Graph } from '@/vis/graph.js'
 
   let container, theChart, nodesDataSet, edgesDataSet;
   
@@ -147,4 +147,4 @@
     border: 1px solid red;
     margin: 20px auto;
   }
-</style>
+</style>../../vis/codigo/graph
