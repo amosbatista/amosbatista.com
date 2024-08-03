@@ -1,0 +1,77 @@
+- não é possível trafegar o carregar detalhe porque não existe relacionamento entre os dados fornecidos pela massa
+- não podemos usar a massa antiga porque ela foi excluída no momento que foi inserida a massa nova
+
+
+
+
+chart
+
+
+
+Edição de nó
+
+
+
+Um edge vai ter:
+- Nó 1 e nó 2
+- Uma lista de descrição
+
+Um nó vai ter:
+- Um rótulo
+- Um ID
+- Uma cor
+
+
+Processo de edição:
+- Form bloqueado
+- [Usuário clica em nó]:
+  - Pegar o nó selecionado 
+  - Preencher os campos do nó.
+  - Liberar botão editar e adicionar.
+  - Exibe formulário edição Nó
+  - Mostrar mensagem:
+    - "Clique em editar ou adicionar ou clique outro nó para tratar edição"
+  - [Editar]
+    - Os campos COR e Rótulo vão liberar.
+    - Os botões [Cancelar] e [Confirmar] vão liberar.
+    - [Cancelar]
+      - Os campos COR e Rótulo vão bloquear.
+      - Liberar botão editar e adicionar.
+    - [Confirmar]
+      - O nó vai ser editado.
+      - Atualização no grafo.
+      - Atualização na memória.
+      - Os campos COR e Rótulo vão bloquear.
+      - Liberar botão editar e adicionar.
+  - [Adicionar]
+    - Os campos COR e Rótulo vão liberar.
+    - Os campos COR e Rótulo vão ficar em branco.
+    - Os botões [Cancelar] e [Confirmar] vão liberar.
+    - [Cancelar]
+      - Os campos COR e Rótulo vão bloquear.
+      - Liberar botão editar e adicionar.
+    - [Confirmar]
+      - O nó vai ser editado.
+      - Atualização no grafo.
+      - Atualização na memória.
+      - Os campos COR e Rótulo vão bloquear.
+      - Liberar botão editar e adicionar.
+
+
+
+  - [Clique segundo nó]
+    - Exibe formulário edição relacionamento
+    - Oculta formulário edição nó
+    - Caso já exista relacionamento:
+      - Vai exibir a lista de mensagem de informação
+        - Cada item da lista vai estar com um X, pedindo para excluir.
+      - Libera botão [Editar]
+    - Caso contrário
+      - Abre campo descrição
+      - Libera botão [Adicionar]
+    - [Editar]
+      - Adicionar o texto na lista de itens no nó
+      - Deselecionar os nós
+    - [Adicionar]
+      - Cria uma relação dentro do grafo.
+    
