@@ -10,6 +10,12 @@
   const nodesDataSet = new vis.DataSet(propsss.nodes.value);
   const edgesDataSet = new vis.DataSet(propsss.edges.value);
 
+  const EVENT_NODE_SELECTED = 'selectedNodeEvent';
+  const EVENT_EDGE_SELECTED = 'selectedEdgesEvent';
+
+
+  const emitEvents = defineEmits([EVENT_NODE_SELECTED, EVENT_EDGE_SELECTED]);
+
   let theChart;
 
   onMounted(() => {
@@ -49,7 +55,24 @@
         position: {x:1,y:6},
         scale: 1.5,
         offset: {x:0,y:0}
-      })
+      });
+      theChart.on('select', (event)=> {
+
+        if (event.nodes.length > 1) {
+          emitEvents(EVENT_EDGE_SELECTED, {
+            nodes: event.nodes,
+            edges: event.edges
+          });
+
+          return;
+        }
+
+        if (event.nodes.length > 0) {
+          emitEvents(EVENT_NODE_SELECTED, event.nodes[0]);
+
+          return;
+        }
+      });
   })
   
 </script>
