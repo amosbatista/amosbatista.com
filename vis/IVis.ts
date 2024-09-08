@@ -24,4 +24,5 @@ export interface IVisNode {
   label: string,
   x: number,
   y: number,
+  description: string
 }

@@ -1,19 +1,13 @@
-import type { IVisEdge, IVisNode } from "~/vis/IVis";
+import type { TheGraphType } from "~/vis/TheGraph.type";
 
-interface TheGraphType {
-  name: string;
-  data: {
-    edges: IVisEdge[];
-    nodes: IVisNode[];
-  }
-}
 export const theGraph = () => {
   return useState<TheGraphType>('theGraph', () => ({
-    name: 'grafi',
+    name: '',
     data: {
         nodes: [{
         id: 1,
         label: '',
+        description: '',
         "x": 1,
         "y": 2
       }],
