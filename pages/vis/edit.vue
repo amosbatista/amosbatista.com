@@ -12,21 +12,23 @@
     isAddingNode: ref(false)
   }
   
-  let graph, nodes, edges;
+  let graph;
+  const nodes = ref([])
+  const edges = ref([])
 
   const graphFromSave = theGraphSave().value;
 
   if (!graphFromSave.data) {
     graph = new Graph();
     
-    nodes = graph.getNodes();
-    edges = graph.getEdges();
+    nodes.value = graph.getNodes();
+    edges.value = graph.getEdges();
   }
   else {
-    nodes = theGraphSave().value.data.nodes;
-    edges = theGraphSave().value.data.edges;
+    nodes.value = theGraphSave().value.data.nodes;
+    edges.value = theGraphSave().value.data.edges;
 
-    graph = new Graph(edges, nodes);
+    graph = new Graph(edges.value, nodes.value);
   }
 
   const persistGraphData = (fromState, fromCookie) => {
@@ -44,6 +46,8 @@
   const updateState = (graphState, graphCookie) =>{
     graphState.value.data.nodes = graph.getNodes();
     graphState.value.data.edges = graph.getEdges();
+    nodes.value = graph.getNodes();
+    edges.value = graph.getEdges();
 
     graphCookie.value = graphState.value;
   }
@@ -75,7 +79,9 @@
       label: nodeEdit.description,
       x: 20,
       y: 20,
-    }, selectedNode)
+    }, nodeEdit.selectedNode)
+
+    updateState(theGraph(), theGraphSave());
   }
 </script>
 
@@ -92,23 +98,34 @@
         class="the-graph-form node-edit">
 
         <div v-show="nodeEdit.isSelectingNode">
-          <input v-model="nodeEdit.label">
           <button @click="editNode()">Editar nó selecionado</button>
           <button @click="addNode()">Adicionar à partir do nó selecionado</button>
         </div>
 
-        <div v-show="nodeEdit.isAddingNode.value">
-          <p>Nome: {{ nodeEdit.isAddingNode.value }}</p>
-          <input v-model="nodeEdit.label">
+        <div v-show="nodeEdit.isAddingNode">
+          <div class="form-group">
+            <p>Nome:</p>
+            <input v-model="nodeEdit.label">
+          </div>
+          <div class="form-group">
+            <p>Descrição</p>
+            <textarea v-model="nodeEdit.description"></textarea>
+          </div>
 
-          <p>Descrição</p>
-          <textarea v-model="nodeEdit.description"></textarea>
-
-          <button @click="addThisNodeToGraph()">Adicionar este nó no grafo</button>
-          <button @click="cancelAdd()">Cancelar e desselecionar</button>
+          <button type="button" @click="addThisNodeToGraph()">Adicionar este nó no grafo</button>
+          <button type="button" @click="cancelAdd()">Cancelar e desselecionar</button>
         </div>
 
       </form>
 
   </div>
 </template>
+
+<style>
+  .form-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+  }
+</style>

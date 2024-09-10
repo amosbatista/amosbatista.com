@@ -5,10 +5,10 @@
 <script setup>
   import vis from 'vis';
 
-  const propsss = defineProps(['nodes', 'edges']);
+  const { nodes, edges } = defineProps(['nodes', 'edges']);
 
-  const nodesDataSet = new vis.DataSet(propsss.nodes.value);
-  const edgesDataSet = new vis.DataSet(propsss.edges.value);
+  const nodesDataSet = new vis.DataSet(nodes);
+  const edgesDataSet = new vis.DataSet(edges);
 
   const EVENT_NODE_SELECTED = 'selectedNodeEvent';
   const EVENT_EDGE_SELECTED = 'selectedEdgesEvent';
@@ -19,8 +19,8 @@
   let theChart;
 
   onMounted(() => {
-    edgesDataSet.update(propsss.edges)
-    nodesDataSet.update(propsss.nodes)
+    edgesDataSet.update(edges)
+    nodesDataSet.update(nodes)
 
 
     const container = document.getElementById("graphContainer");
@@ -74,6 +74,13 @@
         }
       });
   })
+
+  watch(nodes, () => {
+    nodesDataSet.update(nodes)
+  })
+  watch(edges, () => {
+    edgesDataSet.update(edges)
+  })
   
 </script>
 
@@ -88,8 +95,11 @@
 <style>
   .graph {
     width: 95%;
-    height: 500px;
+    height: 1000px;
     border: 1px solid red;
     margin: 20px auto;
+  }
+  #graphContainer{
+    height: 90%;
   }
 </style>
