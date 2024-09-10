@@ -12,13 +12,32 @@
 
   const EVENT_NODE_SELECTED = 'selectedNodeEvent';
   const EVENT_EDGE_SELECTED = 'selectedEdgesEvent';
+  const EVENT_NO_NODE_SELECTED = 'noNodeEvent';
+  const EVENT_GRAPH_POSITION_EDIT = 'graphPositionEditEvent';
+
+  const UPDATE_DELAY_MILISECS = 100;
 
 
-  const emitEvents = defineEmits([EVENT_NODE_SELECTED, EVENT_EDGE_SELECTED]);
+  const emitEvents = defineEmits([
+    EVENT_NODE_SELECTED,
+    EVENT_EDGE_SELECTED,
+    EVENT_NO_NODE_SELECTED,
+    EVENT_GRAPH_POSITION_EDIT
+  ]);
 
   let theChart;
 
   onMounted(() => {
+    
+
+    const queueUpdatesOpt = {
+      queue: {
+        delay: UPDATE_DELAY_MILISECS
+      }
+    }
+    edgesDataSet.setOptions(queueUpdatesOpt)
+    nodesDataSet.setOptions(queueUpdatesOpt)
+
     edgesDataSet.update(edges)
     nodesDataSet.update(nodes)
 
@@ -72,14 +91,24 @@
 
           return;
         }
+
+        emitEvents(EVENT_NO_NODE_SELECTED);
       });
+
+      theChart.on('dragEnd', ()=> {
+        emitEvents(EVENT_GRAPH_POSITION_EDIT, { 
+          nodes: theChart.getPositions()
+         });
+      })
   })
 
   watch(nodes, () => {
     nodesDataSet.update(nodes)
+    console.log('nodes', nodes)
   })
   watch(edges, () => {
     edgesDataSet.update(edges)
+    console.log('edges', edges)
   })
   
 </script>
@@ -95,11 +124,11 @@
 <style>
   .graph {
     width: 95%;
-    height: 1000px;
+    height: 500px;
     border: 1px solid red;
     margin: 20px auto;
   }
   #graphContainer{
-    height: 90%;
+    height: 100%;
   }
 </style>

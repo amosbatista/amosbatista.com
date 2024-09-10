@@ -1,4 +1,4 @@
-import type { IVis, IVisEdge, IVisNode, IVisNodesPosition } from "./IVis";
+import type { IVis, IVisEdge, IVisNode, IVisNodePosition, IVisNodesPosition } from "./IVis";
 
 export class Graph {
   private edges: IVisEdge[];
@@ -29,18 +29,24 @@ export class Graph {
     }))); 
   }
 
-  addNodeFromAnother(newNode: IVisNode, nodeToLink: number) {
-    const newNodeId = newNode.id === 0 ? this.getLastNodeId() + 1 : newNode.id;
-    this.nodes.push({
+  addNodeFromAnother(newNode: IVisNode, nodeToLink: number): IVisNode {
+    const newNodeId = newNode.id === 0 ? this.generateNextId() : newNode.id;
+    const newNodeCoordinates: IVisNodePosition = this.generateCoordinatesFromNeighbour(nodeToLink);
+
+    const newNodeToPush = {
       ...newNode,
-      id: newNodeId
-    });
+      id: newNodeId,
+      x: newNodeCoordinates.x,
+      y: newNodeCoordinates.y
+    };
+    this.nodes.push(newNodeToPush);
     this.edges.push({
       from: newNodeId,
       to: nodeToLink,
       id: undefined,
       value: 1
-    })
+    });
+    return newNodeToPush;
   }
 
   getEdges(): IVisEdge[] {
@@ -49,6 +55,29 @@ export class Graph {
 
   getNodes(): IVisNode[] {
     return this.nodes;
+  }
+
+  getNodeById(id: number): IVisNode | undefined{
+    return this.nodes.find(node => (node.id === id));
+  }
+
+  generateNextId(): number {
+    return this.getLastNodeId() + 1;
+  }
+
+  generateCoordinatesFromNeighbour(anotherNodeId: number): IVisNodePosition {
+    const neighbour = this.getNodeById(anotherNodeId);
+
+    if (!neighbour) {
+      return {
+        x: 20,
+        y: 20
+      }
+    }
+    return {
+      x: neighbour.x + 20,
+      y: neighbour.y + 20
+    }
   }
 
   get(): IVis {

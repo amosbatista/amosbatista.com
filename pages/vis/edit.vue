@@ -4,7 +4,7 @@
   import { Graph } from '@/vis/graph'
 
   const nodeEdit = {
-    isSelectingNode: false,
+    isSelectingNode: ref(false),
     label: '',
     description: '',
     id: 0,
@@ -13,29 +13,37 @@
   }
   
   let graph;
-  const nodes = ref([])
-  const edges = ref([])
+  const nodesLocal = ref([])
+  const edgesLocal = ref([])
 
   const graphFromSave = theGraphSave().value;
 
   if (!graphFromSave.data) {
     graph = new Graph();
     
-    nodes.value = graph.getNodes();
-    edges.value = graph.getEdges();
+    nodesLocal.value = graph.getNodes();
+    edgesLocal.value = graph.getEdges();
   }
   else {
-    nodes.value = theGraphSave().value.data.nodes;
-    edges.value = theGraphSave().value.data.edges;
+    nodesLocal.value = theGraphSave().value.data.nodes;
+    edgesLocal.value = theGraphSave().value.data.edges;
 
-    graph = new Graph(edges.value, nodes.value);
+    graph = new Graph(edgesLocal.value, nodesLocal.value);
   }
 
-  const persistGraphData = (fromState, fromCookie) => {
+  const loadGraphData = (fromState, fromCookie) => {
     
     if(fromState.value.name !== '') {
       fromState.value = fromCookie.value;
     }
+  }
+
+  const persistGraphData = (fromState, fromCookie) => {
+    fromCookie.value = fromState.value;
+  }
+
+  const unselectedNode = () => {
+    unselectedNodeMode();
   }
 
   const showNodeEdit = (nodesToEdit) => {
@@ -43,17 +51,15 @@
     nodeEdit.selectedNode.value = nodesToEdit;
   }
 
-  const updateState = (graphState, graphCookie) =>{
+  const updateState = async (graphState, graphCookie) =>{
     graphState.value.data.nodes = graph.getNodes();
     graphState.value.data.edges = graph.getEdges();
-    nodes.value = graph.getNodes();
-    edges.value = graph.getEdges();
-
+    nodesLocal.value = graph.getNodes();
+    edgesLocal.value = graph.getEdges();
     graphCookie.value = graphState.value;
+    await update
+    
   }
-
-  persistGraphData(theGraph(), theGraphSave());
-  updateState(theGraph(), theGraphSave());
 
   const addNode = () => {
     addNodeMode();
@@ -64,25 +70,48 @@
 
   const addNodeMode = () => {
     nodeEdit.isAddingNode.value = true;
-    nodeEdit.isSelectingNode = false;
+    nodeEdit.isSelectingNode.value = false;
   }
 
   const selectNodeMode = () => {
-    nodeEdit.isAddingNode.value = true;
-    nodeEdit.isSelectingNode = true;
+    nodeEdit.isAddingNode.value = false;
+    nodeEdit.isSelectingNode.value = true;
+  }
+
+  const unselectedNodeMode = () => {
+    nodeEdit.isSelectingNode.value = false;
+    nodeEdit.isAddingNode.value = false;
   }
   
   const addThisNodeToGraph = () => {
     graph.addNodeFromAnother({
       description: nodeEdit.description,
       id: 0,
-      label: nodeEdit.description,
-      x: 20,
-      y: 20,
-    }, nodeEdit.selectedNode)
+      label: nodeEdit.label,
+      x: 0,
+      y: 0,
+    }, nodeEdit.selectedNode.value)
+    
 
-    updateState(theGraph(), theGraphSave());
+    updateData();
+    
+    unselectedNode();
   }
+
+  const updateDataFromGraph = (newPositions) => {
+    graph.updatedCoordinatesFromVis(newPositions);
+
+    updateData();
+  }
+
+  const updateData = () => {
+    updateState(theGraph(), theGraphSave());
+    persistGraphData(theGraph(), theGraphSave());
+  }
+
+  loadGraphData(theGraph(), theGraphSave());
+  updateState(theGraph(), theGraphSave());
+  unselectedNodeMode();
 </script>
 
 <template>
@@ -90,19 +119,22 @@
     <div class="the-graph">
 
       <TheGraph
-        :nodes="nodes"
-        :edges="edges"
-        @selected-node-event="showNodeEdit"></TheGraph>
+        :nodes="nodesLocal"
+        :edges="edgesLocal"
+        @selected-node-event="showNodeEdit"
+        @no-node-event="unselectedNode"
+        @graph-position-edit-event="updateDataFromGraph"
+        ></TheGraph>
       </div>
       <form 
         class="the-graph-form node-edit">
 
-        <div v-show="nodeEdit.isSelectingNode">
-          <button @click="editNode()">Editar nó selecionado</button>
-          <button @click="addNode()">Adicionar à partir do nó selecionado</button>
+        <div v-show="nodeEdit.isSelectingNode.value">
+          <button type="button" @click="editNode()">Editar nó selecionado</button>
+          <button type="button" @click="addNode()">Adicionar à partir do nó selecionado</button>
         </div>
 
-        <div v-show="nodeEdit.isAddingNode">
+        <div v-show="nodeEdit.isAddingNode.value">
           <div class="form-group">
             <p>Nome:</p>
             <input v-model="nodeEdit.label">
@@ -113,7 +145,7 @@
           </div>
 
           <button type="button" @click="addThisNodeToGraph()">Adicionar este nó no grafo</button>
-          <button type="button" @click="cancelAdd()">Cancelar e desselecionar</button>
+          <button type="button" @click="unselectedNode()">Cancelar</button>
         </div>
 
       </form>
