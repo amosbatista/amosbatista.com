@@ -7,7 +7,7 @@ export class Graph {
   constructor (edges?: IVisEdge[], nodes?: IVisNode[]) {
     this.edges = edges || [];
     this.nodes = nodes || [{
-      id: 0,
+      id: 1,
       description: '',
       label: '',
       x: 0,

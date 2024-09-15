@@ -1,7 +1,10 @@
 <script setup>
   
 
-  import { Graph } from '@/vis/graph'
+import { generateCoordinatesFromNeighbour } from '~/composables/Graph/generateCoordinatesFromNeighbour';
+import { getLastNodeId } from '~/composables/Graph/getLastId';
+import { getNodeById } from '~/composables/Graph/getNodeById';
+import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinatesFromVis';
 
   const nodeEdit = {
     isSelectingNode: ref(false),
@@ -12,23 +15,26 @@
     isAddingNode: ref(false)
   }
   
-  let graph;
-  const nodesLocal = ref([])
-  const edgesLocal = ref([])
+  let nodesLocal 
+  let edgesLocal 
+
+  let lastNode;
 
   const graphFromSave = theGraphSave().value;
 
-  if (!graphFromSave.data) {
-    graph = new Graph();
-    
-    nodesLocal.value = graph.getNodes();
-    edgesLocal.value = graph.getEdges();
+  if (!graphFromSave.data) {  
+    nodesLocal = ref([{
+      id: 1,
+      description: '',
+      label: '',
+      x: 0,
+      y: 0
+    }]);
+    edgesLocal = ref([]);
   }
   else {
-    nodesLocal.value = theGraphSave().value.data.nodes;
-    edgesLocal.value = theGraphSave().value.data.edges;
-
-    graph = new Graph(edgesLocal.value, nodesLocal.value);
+    nodesLocal = ref(theGraphSave().value.data.nodes);
+    edgesLocal = ref(theGraphSave().value.data.edges);
   }
 
   const loadGraphData = (fromState, fromCookie) => {
@@ -52,13 +58,9 @@
   }
 
   const updateState = async (graphState, graphCookie) =>{
-    graphState.value.data.nodes = graph.getNodes();
-    graphState.value.data.edges = graph.getEdges();
-    nodesLocal.value = graph.getNodes();
-    edgesLocal.value = graph.getEdges();
+    graphState.value.data.nodes = nodesLocal
+    graphState.value.data.edges = edgesLocal
     graphCookie.value = graphState.value;
-    await update
-    
   }
 
   const addNode = () => {
@@ -84,14 +86,24 @@
   }
   
   const addThisNodeToGraph = () => {
-    graph.addNodeFromAnother({
+    const newNodeId = lastNode.id + 1;
+    const nodeNeighbour = getNodeById(nodesLocal, nodeEdit.selectedNode.value);
+    const newNodeCoordinates = generateCoordinatesFromNeighbour(nodeNeighbour);
+
+    nodesLocal.value.push({
+      id: newNodeId,
+      x: newNodeCoordinates.x,
+      y: newNodeCoordinates.y,
       description: nodeEdit.description,
-      id: 0,
       label: nodeEdit.label,
-      x: 0,
-      y: 0,
-    }, nodeEdit.selectedNode.value)
-    
+    });
+
+    edgesLocal.value.push({
+      from: newNodeId,
+      to: nodeEdit.selectedNode.value,
+      id: undefined,
+      value: 1
+    });
 
     updateData();
     
@@ -99,7 +111,7 @@
   }
 
   const updateDataFromGraph = (newPositions) => {
-    graph.updatedCoordinatesFromVis(newPositions);
+    updatedCoordinatesFromVis(nodesLocal, newPositions);
 
     updateData();
   }
@@ -109,9 +121,12 @@
     persistGraphData(theGraph(), theGraphSave());
   }
 
+  
+
   loadGraphData(theGraph(), theGraphSave());
   updateState(theGraph(), theGraphSave());
   unselectedNodeMode();
+  lastNode = getLastNodeId(nodesLocal)
 </script>
 
 <template>

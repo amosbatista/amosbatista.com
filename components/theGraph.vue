@@ -104,12 +104,11 @@
 
   watch(nodes, () => {
     nodesDataSet.update(nodes)
-    console.log('nodes', nodes)
   })
   watch(edges, () => {
     edgesDataSet.update(edges)
-    console.log('edges', edges)
   })
+ 
   
 </script>
 
