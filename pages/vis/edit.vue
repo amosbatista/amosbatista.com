@@ -12,7 +12,8 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
     description: '',
     id: 0,
     selectedNode: ref({}),
-    isAddingNode: ref(false)
+    isAddingNode: ref(false),
+    isEditingNode: ref(false)
   }
   
   let nodesLocal 
@@ -59,6 +60,7 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
     graphState.value.data.nodes = nodesLocal
     graphState.value.data.edges = edgesLocal
     graphCookie.value = graphState.value;
+    refreshCookie('the-graph')
   }
 
   const addNode = () => {
@@ -68,19 +70,36 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
     nodeEdit.description = '';
   }
 
+  const editNode = () => {
+    editNodeMode();
+
+    const nodeSelected = getNodeById(nodesLocal, nodeEdit.selectedNode.value);
+    nodeEdit.label = nodeSelected.label;
+    nodeEdit.description = nodeSelected.id;
+  }
+
+  const editNodeMode = () => {
+    nodeEdit.isAddingNode.value = false;
+    nodeEdit.isSelectingNode.value = false;
+    nodeEdit.isEditingNode.value = true;
+  }
+
   const addNodeMode = () => {
     nodeEdit.isAddingNode.value = true;
     nodeEdit.isSelectingNode.value = false;
+    nodeEdit.isEditingNode.value = false;
   }
 
   const selectNodeMode = () => {
     nodeEdit.isAddingNode.value = false;
     nodeEdit.isSelectingNode.value = true;
+    nodeEdit.isEditingNode.value = false;
   }
 
   const unselectedNodeMode = () => {
     nodeEdit.isSelectingNode.value = false;
     nodeEdit.isAddingNode.value = false;
+    nodeEdit.isEditingNode.value = false;
   }
   
   const addThisNodeToGraph = () => {
@@ -105,6 +124,16 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
 
     updateData();
     
+    unselectedNode();
+  }
+
+  const saveThisNode = () => {
+    const node = getNodeById(nodesLocal, nodeEdit.selectedNode.value);
+    
+    node.label = nodeEdit.label;
+    node.description = nodeEdit.description;
+
+    updateData();
     unselectedNode();
   }
 
@@ -156,8 +185,23 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
             <textarea v-model="nodeEdit.description"></textarea>
           </div>
 
-          <button type="button" @click="addThisNodeToGraph()">Adicionar este nó no grafo</button>
           <button type="button" @click="unselectedNode()">Cancelar</button>
+          <button type="button" @click="addThisNodeToGraph()">Adicionar este nó no grafo</button>
+        </div>
+
+
+        <div v-show="nodeEdit.isEditingNode.value">
+          <div class="form-group">
+            <p>Nome:</p>
+            <input v-model="nodeEdit.label">
+          </div>
+          <div class="form-group">
+            <p>Descrição:</p>
+            <textarea v-model="nodeEdit.description"></textarea>
+          </div>
+
+          <button type="button" @click="unselectedNode()">Cancelar</button>
+          <button type="button" @click="saveThisNode()">Salvar edição do nó</button>
         </div>
 
       </form>
