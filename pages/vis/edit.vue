@@ -18,8 +18,6 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
   let nodesLocal 
   let edgesLocal 
 
-  let lastNode;
-
   const graphFromSave = theGraphSave().value;
 
   if (!graphFromSave.data) {  
@@ -86,7 +84,7 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
   }
   
   const addThisNodeToGraph = () => {
-    const newNodeId = lastNode.id + 1;
+    const newNodeId = getLastNodeId(nodesLocal).id + 1;
     const nodeNeighbour = getNodeById(nodesLocal, nodeEdit.selectedNode.value);
     const newNodeCoordinates = generateCoordinatesFromNeighbour(nodeNeighbour);
 
@@ -126,7 +124,6 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
   loadGraphData(theGraph(), theGraphSave());
   updateState(theGraph(), theGraphSave());
   unselectedNodeMode();
-  lastNode = getLastNodeId(nodesLocal)
 </script>
 
 <template>
