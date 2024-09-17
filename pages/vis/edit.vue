@@ -1,10 +1,15 @@
 <script setup>
   
 
+import { deleteEdge } from '~/composables/Graph/deleteEdge';
+import { deleteEdgesOfNode } from '~/composables/Graph/deleteEdgesOfNode';
+import { deleteNode } from '~/composables/Graph/deleteNode';
 import { generateCoordinatesFromNeighbour } from '~/composables/Graph/generateCoordinatesFromNeighbour';
+import { getEdgeByNodes } from '~/composables/Graph/getEdgeByNodes';
 import { getLastNodeId } from '~/composables/Graph/getLastId';
 import { getNodeById } from '~/composables/Graph/getNodeById';
 import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinatesFromVis';
+import { updateEdge } from '~/composables/Graph/updateEdge';
 
   const nodeEdit = {
     isSelectingNode: ref(false),
@@ -12,15 +17,21 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
     description: '',
     id: 0,
     selectedNode: ref({}),
+    selectedAnotherNode: ref({}),
     isAddingNode: ref(false),
     isEditingNode: ref(false),
-    isInitialState: ref(false)
+    isInitialState: ref(false),
+    isEditingEdge: ref(false),
+    isAddingEdge: ref(false),
+    edgeText: ref('')
   }
 
   let exported = ref('')
   
   let nodesLocal 
   let edgesLocal 
+  let nodesIdForEdge
+  let selectedEdge
 
   const graphFromSave = theGraph().value;
 
@@ -51,12 +62,37 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
   }
 
   const unselectedNode = () => {
+    nodeEdit.selectedNode.value = null;
     unselectedNodeMode();
   }
 
   const showNodeEdit = (nodesToEdit) => {
-    selectNodeMode();
     nodeEdit.selectedNode.value = nodesToEdit;
+    selectNodeMode();
+  }
+
+  const showEdgesEdit = (nodesEdges) => {
+    const maybeEdge = getEdgeByNodes(
+      edgesLocal,
+      getNodeById(nodesLocal, nodesEdges.nodes[0]),
+      getNodeById(nodesLocal, nodesEdges.nodes[1])
+    )
+
+    nodesIdForEdge = [
+      nodesEdges.nodes[0],
+      nodesEdges.nodes[1]
+    ]
+
+    if(maybeEdge) {
+      selectedEdge = maybeEdge
+      nodeEdit.edgeText = maybeEdge.label;
+      editingEdgeMode();
+
+      return;
+    }
+
+    nodeEdit.edgeText = '';
+    addingEdgeMode();
   }
 
   const updateState = async (graphState) =>{
@@ -86,6 +122,8 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
     nodeEdit.isSelectingNode.value = false;
     nodeEdit.isEditingNode.value = true;
     nodeEdit.isInitialState.value = false;
+    nodeEdit.isEditingEdge.value = false;
+    nodeEdit.isAddingEdge.value = false;
   }
 
   const addNodeMode = () => {
@@ -93,6 +131,8 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
     nodeEdit.isSelectingNode.value = false;
     nodeEdit.isEditingNode.value = false;
     nodeEdit.isInitialState.value = false;
+    nodeEdit.isEditingEdge.value = false;
+    nodeEdit.isAddingEdge.value = false;
   }
 
   const selectNodeMode = () => {
@@ -100,6 +140,8 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
     nodeEdit.isSelectingNode.value = true;
     nodeEdit.isEditingNode.value = false;
     nodeEdit.isInitialState.value = false;
+    nodeEdit.isEditingEdge.value = false;
+    nodeEdit.isAddingEdge.value = false;
   }
 
   const unselectedNodeMode = () => {
@@ -107,11 +149,67 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
     nodeEdit.isAddingNode.value = false;
     nodeEdit.isEditingNode.value = false;
     nodeEdit.isInitialState.value = true;
+    nodeEdit.isEditingEdge.value = false;
+    nodeEdit.isAddingEdge.value = false;
   }
-  
+
+  const editingEdgeMode = () => {
+    nodeEdit.isSelectingNode.value = false;
+    nodeEdit.isAddingNode.value = false;
+    nodeEdit.isEditingNode.value = false;
+    nodeEdit.isInitialState.value = false;
+    nodeEdit.isEditingEdge.value = true;
+    nodeEdit.isAddingEdge.value = false;
+  }
+
+  const addingEdgeMode = () => {
+    nodeEdit.isSelectingNode.value = false;
+    nodeEdit.isAddingNode.value = false;
+    nodeEdit.isEditingNode.value = false;
+    nodeEdit.isInitialState.value = false;
+    nodeEdit.isEditingEdge.value = false;
+    nodeEdit.isAddingEdge.value = true;
+  }
+
+  const addEdge = () => {
+    edgesLocal.value.push({
+      from: nodesIdForEdge[0],
+      to: nodesIdForEdge[1],
+      id: undefined,
+      value: 1,
+      label: nodeEdit.edgeText
+    });
+
+    updateData();
+    
+    unselectedNode();
+  }
+
+  const editEdge = () => {
+    selectedEdge.label = nodeEdit.edgeText;
+    updateEdge(edgesLocal, selectedEdge);
+
+    updateData();
+    
+    unselectedNode();
+  }
+
+  const delEdge = () => {
+    deleteEdge(edgesLocal, selectedEdge.id);
+    updateData();
+    unselectedNode();
+  }
+
+  const delNode = () => {
+    deleteEdgesOfNode(edgesLocal, nodeEdit.selectedNode.value[0]);
+    deleteNode(nodesLocal, nodeEdit.selectedNode.value[0]);
+    updateData();
+    unselectedNode();
+  }
+
   const addThisNodeToGraph = () => {
     const newNodeId = getLastNodeId(nodesLocal).id + 1;
-    const nodeNeighbour = getNodeById(nodesLocal, nodeEdit.selectedNode.value);
+    const nodeNeighbour = getNodeById(nodesLocal, nodeEdit.selectedNode.value[0]);
     const newNodeCoordinates = generateCoordinatesFromNeighbour(nodeNeighbour);
 
     nodesLocal.value.push({
@@ -124,7 +222,7 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
 
     edgesLocal.value.push({
       from: newNodeId,
-      to: nodeEdit.selectedNode.value,
+      to: nodeEdit.selectedNode.value[0],
       id: undefined,
       value: 1
     });
@@ -135,7 +233,7 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
   }
 
   const saveThisNode = () => {
-    const node = getNodeById(nodesLocal, nodeEdit.selectedNode.value);
+    const node = getNodeById(nodesLocal, nodeEdit.selectedNode.value[0]);
     
     node.label = nodeEdit.label;
     node.description = nodeEdit.description;
@@ -174,6 +272,7 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
         :nodes="nodesLocal"
         :edges="edgesLocal"
         @selected-node-event="showNodeEdit"
+        @selected-edges-event="showEdgesEdit"
         @no-node-event="unselectedNode"
         @graph-position-edit-event="updateDataFromGraph"
         ></TheGraph>
@@ -189,6 +288,7 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
         <div v-show="nodeEdit.isSelectingNode.value">
           <button type="button" @click="editNode()">Editar nó selecionado</button>
           <button type="button" @click="addNode()">Adicionar à partir do nó selecionado</button>
+          <button type="button" @click="delNode()">Excluir nó e ligações</button>
         </div>
 
         <div v-show="nodeEdit.isAddingNode.value">
@@ -218,6 +318,27 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
 
           <button type="button" @click="unselectedNode()">Cancelar</button>
           <button type="button" @click="saveThisNode()">Salvar edição do nó</button>
+        </div>
+
+        <div v-show="nodeEdit.isAddingEdge.value">
+          <div class="form-group">
+            <p>Texto para a ligação:</p>
+            <textarea v-model="nodeEdit.edgeText"></textarea>
+          </div>
+
+          <button type="button" @click="unselectedNode()">Cancelar criação de ligação</button>
+          <button type="button" @click="addEdge()">Criar ligação entre nós</button>
+        </div>
+
+        <div v-show="nodeEdit.isEditingEdge.value">
+          <div class="form-group">
+            <p>Texto para a ligação:</p>
+            <textarea v-model="nodeEdit.edgeText"></textarea>
+          </div>
+
+          <button type="button" @click="unselectedNode()">Cancelar edição de ligação</button>
+          <button type="button" @click="editEdge()">Editar ligação entre nós</button>
+          <button type="button" @click="delEdge()">Excluir ligação</button>
         </div>
 
       </form>

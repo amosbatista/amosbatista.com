@@ -26,6 +26,7 @@
   ]);
 
   let theChart;
+  let selectedNodes = [];
 
   onMounted(() => {
     
@@ -44,19 +45,20 @@
 
     const container = document.getElementById("graphContainer");
 
-    const BASE_NODE =  {
-      color:  "#229db3",
-      font: {
-        size: 10,
-      },
-      
-    };
     const options = { 
       width: "100%",
       height: "100%",
-      nodes: BASE_NODE,
+      nodes:  {
+        color:  "#229db3",
+        font: {
+          size: 10,
+        }, 
+      },
       edges: {
-        smooth: false,
+        color:  "#eeeeee",
+        font: {
+          size: 10,
+        },
       },
       physics: {
         enabled: false,
@@ -76,22 +78,30 @@
         offset: {x:0,y:0}
       });
       theChart.on('select', (event)=> {
+        if (selectedNodes.length >= 1 && event.nodes.length > 0) {
 
-        if (event.nodes.length > 1) {
+          event.nodes.forEach(selected => {
+            selectedNodes.push(selected);
+          })
+          theChart.selectNodes(selectedNodes);
           emitEvents(EVENT_EDGE_SELECTED, {
-            nodes: event.nodes,
+            nodes: selectedNodes,
             edges: event.edges
           });
 
           return;
         }
 
-        if (event.nodes.length > 0) {
-          emitEvents(EVENT_NODE_SELECTED, event.nodes[0]);
+        if (selectedNodes.length >= 0 & event.nodes.length > 0) {
+          selectedNodes.push(event.nodes[0]);
+          theChart.selectNodes(selectedNodes);
+          emitEvents(EVENT_NODE_SELECTED, selectedNodes);
 
           return;
         }
 
+        selectedNodes = []
+        theChart.selectNodes(selectedNodes);
         emitEvents(EVENT_NO_NODE_SELECTED);
       });
 
@@ -103,9 +113,17 @@
   })
 
   watch(nodes, () => {
+    if(nodes.length !== nodesDataSet.length) {
+      nodesDataSet.clear(nodes)  
+    }
+
     nodesDataSet.update(nodes)
   })
   watch(edges, () => {
+
+    if(edges.length !== edgesDataSet.length) {
+      edgesDataSet.clear(edges)  
+    }
     edgesDataSet.update(edges)
   })
  

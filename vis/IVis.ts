@@ -15,8 +15,9 @@ export interface IVisNodesPosition {
 export interface IVisEdge {
   from: number,
   to: number,
-  id?: number,
-  value?: number
+  id?: string,
+  value?: number,
+  label: string
 }
 
 export interface IVisNode {
