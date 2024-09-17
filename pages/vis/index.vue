@@ -1,5 +1,5 @@
 <script setup>
-  const graphFromCookie = theGraphSave().value;
+  const graphFromCookie = theGraph().value;
 
   const exported = ref(JSON.stringify(graphFromCookie.data));
   const name = ref(graphFromCookie.name);
@@ -12,7 +12,7 @@
       const toUpdate = JSON.parse(exported.value);
       graph.value = toUpdate;
 
-      theGraphSave().value = {
+      theGraph().value = {
         name: name.value,
         data: toUpdate
       }
@@ -20,8 +20,7 @@
       
     }
     else {
-      useCookie('the-graph', { 
-        default: () => (graph.value)});
+      console.log('Sem dado para exportar')
     }
     
     

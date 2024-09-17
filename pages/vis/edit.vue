@@ -13,13 +13,16 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
     id: 0,
     selectedNode: ref({}),
     isAddingNode: ref(false),
-    isEditingNode: ref(false)
+    isEditingNode: ref(false),
+    isInitialState: ref(false)
   }
+
+  let exported = ref('')
   
   let nodesLocal 
   let edgesLocal 
 
-  const graphFromSave = theGraphSave().value;
+  const graphFromSave = theGraph().value;
 
   if (!graphFromSave.data) {  
     nodesLocal = ref([{
@@ -32,19 +35,19 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
     edgesLocal = ref([]);
   }
   else {
-    nodesLocal = ref(theGraphSave().value.data.nodes);
-    edgesLocal = ref(theGraphSave().value.data.edges);
+    nodesLocal = ref(theGraph().value.data.nodes);
+    edgesLocal = ref(theGraph().value.data.edges);
   }
 
-  const loadGraphData = (fromState, fromCookie) => {
+  const loadGraphData = (_fromState) => {
     
-    if(fromState.value.name !== '') {
+    /*if(fromState.value.name !== '') {
       fromState.value = fromCookie.value;
-    }
+    }*/
   }
 
-  const persistGraphData = (fromState, fromCookie) => {
-    fromCookie.value = fromState.value;
+  const persistGraphData = (_fromState, _fromCookie) => {
+    //fromCookie.value = fromState.value;
   }
 
   const unselectedNode = () => {
@@ -56,11 +59,11 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
     nodeEdit.selectedNode.value = nodesToEdit;
   }
 
-  const updateState = async (graphState, graphCookie) =>{
+  const updateState = async (graphState) =>{
     graphState.value.data.nodes = nodesLocal
     graphState.value.data.edges = edgesLocal
-    graphCookie.value = graphState.value;
-    refreshCookie('the-graph')
+    // graphCookie.value = graphState.value;
+    // refreshCookie('the-graph')
   }
 
   const addNode = () => {
@@ -82,24 +85,28 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
     nodeEdit.isAddingNode.value = false;
     nodeEdit.isSelectingNode.value = false;
     nodeEdit.isEditingNode.value = true;
+    nodeEdit.isInitialState.value = false;
   }
 
   const addNodeMode = () => {
     nodeEdit.isAddingNode.value = true;
     nodeEdit.isSelectingNode.value = false;
     nodeEdit.isEditingNode.value = false;
+    nodeEdit.isInitialState.value = false;
   }
 
   const selectNodeMode = () => {
     nodeEdit.isAddingNode.value = false;
     nodeEdit.isSelectingNode.value = true;
     nodeEdit.isEditingNode.value = false;
+    nodeEdit.isInitialState.value = false;
   }
 
   const unselectedNodeMode = () => {
     nodeEdit.isSelectingNode.value = false;
     nodeEdit.isAddingNode.value = false;
     nodeEdit.isEditingNode.value = false;
+    nodeEdit.isInitialState.value = true;
   }
   
   const addThisNodeToGraph = () => {
@@ -144,14 +151,18 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
   }
 
   const updateData = () => {
-    updateState(theGraph(), theGraphSave());
-    persistGraphData(theGraph(), theGraphSave());
+    updateState(theGraph());
+    persistGraphData(theGraph());
+  }
+
+  const exportToTxt = () => {
+    exported.value = JSON.stringify(theGraph().value.data)
   }
 
   
 
-  loadGraphData(theGraph(), theGraphSave());
-  updateState(theGraph(), theGraphSave());
+  loadGraphData(theGraph());
+  updateState(theGraph());
   unselectedNodeMode();
 </script>
 
@@ -169,6 +180,11 @@ import { updatedCoordinatesFromVis } from '~/composables/Graph/updatedCoordinate
       </div>
       <form 
         class="the-graph-form node-edit">
+
+        <div v-show="nodeEdit.isInitialState.value">
+          <button type="button" @click="exportToTxt()">Exportar grafo para texto</button>
+          <textarea v-model="exported"></textarea>
+        </div>
 
         <div v-show="nodeEdit.isSelectingNode.value">
           <button type="button" @click="editNode()">Editar nó selecionado</button>
