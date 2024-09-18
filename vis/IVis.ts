@@ -1,3 +1,5 @@
+import type { IGraphNodeTypes } from "./INodeType";
+
 export interface IVis {
   edges: IVisEdge[],
   nodes: IVisNode[]
@@ -25,5 +27,6 @@ export interface IVisNode {
   label: string,
   x: number,
   y: number,
-  description: string
+  description: string,
+  type: IGraphNodeTypes
 }

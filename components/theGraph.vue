@@ -4,6 +4,7 @@
 
 <script setup>
   import vis from 'vis';
+import { NodesTypes } from '~/vis/graph.nodes.type';
 
   const { nodes, edges } = defineProps(['nodes', 'edges']);
 
@@ -40,7 +41,7 @@
     nodesDataSet.setOptions(queueUpdatesOpt)
 
     edgesDataSet.update(edges)
-    nodesDataSet.update(nodes)
+    nodesDataSet.update(nodeFormatTranslator(nodes))
 
 
     const container = document.getElementById("graphContainer");
@@ -124,7 +125,7 @@
       nodesDataSet.clear(nodes)  
     }
 
-    nodesDataSet.update(nodes)
+    nodesDataSet.update(nodeFormatTranslator(nodes))
   })
   watch(edges, () => {
 
@@ -133,6 +134,24 @@
     }
     edgesDataSet.update(edges)
   })
+
+  const nodeFormatTranslator = (_nodes) => {
+    return _nodes.map (node => ({
+      ...node,
+      color: NodesTypes[node.type] ? NodesTypes[node.type].color : NodesTypes['type1'].color,
+      margin: NodesTypes[node.type] ? NodesTypes[node.type].margin : NodesTypes['type1'].margin,
+      shape: NodesTypes[node.type] ? NodesTypes[node.type].shape : NodesTypes['type1'].shape,
+      font: {
+        color: NodesTypes[node.type] ? NodesTypes[node.type].font.color : NodesTypes['type1'].font.color,
+        bold: NodesTypes[node.type] ? NodesTypes[node.type].font.bold : NodesTypes['type1'].font.bold
+
+      },
+      shapeProperties: {
+        borderDashes: NodesTypes[node.type] ? NodesTypes[node.type].shapeProperties.borderDashes : NodesTypes['type1'].shapeProperties.borderDashes,
+      },
+      borderWidth: NodesTypes[node.type] ? NodesTypes[node.type].borderWidth : NodesTypes['type1'].borderWidth,
+    }))
+  }
  
   
 </script>

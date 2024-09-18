@@ -16,6 +16,7 @@ import { updateEdge } from '~/composables/Graph/updateEdge';
     label: '',
     description: '',
     id: 0,
+    type: '',
     selectedNode: ref({}),
     selectedAnotherNode: ref({}),
     isAddingNode: ref(false),
@@ -41,7 +42,8 @@ import { updateEdge } from '~/composables/Graph/updateEdge';
       description: '',
       label: '',
       x: 0,
-      y: 0
+      y: 0,
+      type: 'type1'
     }]);
     edgesLocal = ref([]);
   }
@@ -62,7 +64,8 @@ import { updateEdge } from '~/composables/Graph/updateEdge';
   }
 
   const unselectedNode = () => {
-    nodeEdit.selectedNode.value = null;
+    nodeEdit.selectedNode.value = [];
+    clearFields();
     unselectedNodeMode();
   }
 
@@ -103,18 +106,23 @@ import { updateEdge } from '~/composables/Graph/updateEdge';
   }
 
   const addNode = () => {
+    clearFields();
     addNodeMode();
+  }
 
+  const clearFields = () => {
     nodeEdit.label = '';
     nodeEdit.description = '';
+    nodeEdit.type = '';
   }
 
   const editNode = () => {
     editNodeMode();
 
-    const nodeSelected = getNodeById(nodesLocal, nodeEdit.selectedNode.value);
+    const nodeSelected = getNodeById(nodesLocal, nodeEdit.selectedNode.value[0]);
     nodeEdit.label = nodeSelected.label;
     nodeEdit.description = nodeSelected.id;
+    nodeEdit.type = nodeSelected.type;
   }
 
   const editNodeMode = () => {
@@ -218,6 +226,7 @@ import { updateEdge } from '~/composables/Graph/updateEdge';
       y: newNodeCoordinates.y,
       description: nodeEdit.description,
       label: nodeEdit.label,
+      type: nodeEdit.type
     });
 
     edgesLocal.value.push({
@@ -237,6 +246,7 @@ import { updateEdge } from '~/composables/Graph/updateEdge';
     
     node.label = nodeEdit.label;
     node.description = nodeEdit.description;
+    node.type = nodeEdit.type;
 
     updateData();
     unselectedNode();
@@ -298,7 +308,20 @@ import { updateEdge } from '~/composables/Graph/updateEdge';
           </div>
           <div class="form-group">
             <p>Descrição</p>
-            <textarea v-model="nodeEdit.description"></textarea>
+            <textarea  v-if="false"  v-model="nodeEdit.description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <p>Tipo</p>
+            <select v-model="nodeEdit.type">
+              <option value="type1">Tipo 1</option>
+              <option value="type2">Tipo 2</option>
+              <option value="type3">Tipo 3</option>
+              <option value="type4">Tipo 4</option>
+              <option value="type5">Tipo 5</option>
+              <option value="type6">Tipo 6</option>
+              <option value=""></option>
+            </select>
           </div>
 
           <button type="button" @click="unselectedNode()">Cancelar</button>
@@ -313,7 +336,19 @@ import { updateEdge } from '~/composables/Graph/updateEdge';
           </div>
           <div class="form-group">
             <p>Descrição:</p>
-            <textarea v-model="nodeEdit.description"></textarea>
+            <textarea v-if="false" v-model="nodeEdit.description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <p>Tipo</p>
+            <select v-model="nodeEdit.type">
+              <option value="type1">Tipo 1</option>
+              <option value="type2">Tipo 2</option>
+              <option value="type3">Tipo 3</option>
+              <option value="type4">Tipo 4</option>
+              <option value="type5">Tipo 5</option>
+              <option value="type6">Tipo 6</option>
+            </select>
           </div>
 
           <button type="button" @click="unselectedNode()">Cancelar</button>
