@@ -294,7 +294,7 @@ import { updateEdge } from '~/composables/Graph/updateEdge';
         <div v-show="nodeEdit.isAddingNode.value">
           <div class="form-group">
             <p>Nome:</p>
-            <input v-model="nodeEdit.label">
+            <textarea v-model="nodeEdit.label"></textarea>
           </div>
           <div class="form-group">
             <p>Descrição</p>
@@ -309,7 +309,7 @@ import { updateEdge } from '~/composables/Graph/updateEdge';
         <div v-show="nodeEdit.isEditingNode.value">
           <div class="form-group">
             <p>Nome:</p>
-            <input v-model="nodeEdit.label">
+            <textarea v-model="nodeEdit.label"></textarea>
           </div>
           <div class="form-group">
             <p>Descrição:</p>
