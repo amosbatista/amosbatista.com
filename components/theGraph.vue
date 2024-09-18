@@ -59,6 +59,13 @@
         font: {
           size: 10,
         },
+        smooth: {
+          enabled: false
+        },
+        scaling: {
+          max: 5,
+          label: false
+        }
       },
       physics: {
         enabled: false,
