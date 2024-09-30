@@ -1,10 +1,10 @@
 <script setup>
-  const { itemName } = defineProps(['itemName']);
+  const { itemName } = defineProps(['itemName', 'index']);
 </script>
 <template>
-  <div class="item">
+  <a class="item" :href="'https://ursal.zone/tags/kinktober2024_dia' + index ">
     {{  itemName  }}
-  </div>
+  </a>
 </template>
 <style>
   .item {
@@ -16,5 +16,9 @@
     color: white;
     font-size: 150%;
     font-weight: bold;
+    text-decoration: none;
+  }
+  .item:hover {
+    text-decoration: underline;
   }
 </style>
