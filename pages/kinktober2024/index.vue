@@ -1,12 +1,12 @@
 <script setup>
   const list = [
-    'manso',
+    'mansa',
     'câmera',
-    'frio',
+    'fria',
     'veia',
     'friso',
     'amassar',
-    'culpado',
+    'culpada',
     'erguer',
     'asas',
     'brilho',
