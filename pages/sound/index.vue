@@ -135,11 +135,13 @@ import { GameOfLife } from '~/songGenerator/gameOfLife';
       <label for="toneSlider">Duração do tom</label>
       <input type="range" id="toneSlider" v-model="toneDuration" min="50" max="500">
     </div>
-    <div class="speed-zone">
+    <div class="speed-zone tone-zone">
       <label for="toneSlider">Afinador</label>
-      <span>Mais grave</span>
-      <input type="range" id="toneSlider" v-model="toneMultiplier" min="5" max="25">
-      <span>Mais agudo</span>
+      <div>
+        <span>Mais grave</span>
+        <input type="range" id="toneSlider" v-model="toneMultiplier" min="5" max="25">
+        <span>Mais agudo</span>
+      </div>
     </div>
 
     <div class="action-zone">
@@ -164,10 +166,21 @@ import { GameOfLife } from '~/songGenerator/gameOfLife';
 </template>
 
 <style>
-  .row {
-    margin: 0;
+  .game {
+    width: 100%;
     display: flex;
+    flex-direction: column;
+    align-items: center;
   }
+  .speed-zone, .action-zone {
+    width: 50%;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
   .button-tone {
     border: 0;
     margin: 0;
