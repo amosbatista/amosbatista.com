@@ -26,6 +26,9 @@ export const soundGeneratorPersistece = () => {
 
     useCookie(LOCALSTORAGE_KEY).value = JSON.stringify(gameMemory)
   }, 
+  clear: () => {
+    useCookie(LOCALSTORAGE_KEY).value = '[]';
+  },
   get: () => {
     const gameMemoryString =useCookie(LOCALSTORAGE_KEY, { default: () => '[]'}).value
 

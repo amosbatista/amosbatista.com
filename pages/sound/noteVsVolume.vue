@@ -1,10 +1,11 @@
 <script setup>
 import { soundGeneratorPersistece } from '~/composables/soundGeneratorPersistence';
 import { GameOfLife } from '~/songGenerator/gameOfLife';
+import { notes } from '~/songGenerator/notes';
 
-  const GRID_LIMIT_ROW = 10;
-  const GRID_LIMIT_COL = 10;
-  const SIMULTANEOUS_TONES = 6;
+  const GRID_LIMIT_ROW = 24;
+  const GRID_LIMIT_COL = 24;
+  const SIMULTANEOUS_TONES = 16;
 
   const TONE_ON_VALUE = 1
 
@@ -12,12 +13,38 @@ import { GameOfLife } from '~/songGenerator/gameOfLife';
   const toneDuration = ref(200)
   const toneMultiplier = ref(15)
 
+  const NOTES_LIST = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+  const OCTAVE_LIST = ['2','3'];
+  const NOTE_TYPE_LIST = ['', '#']
+
   const gameMemory = soundGeneratorPersistece();
 
   let interval = undefined
   let audioContext = undefined
 
   let oscilatorList = []
+
+  const generateAllNoteList = () => {
+    const final = []
+
+    OCTAVE_LIST.forEach(octave => {
+      NOTES_LIST.forEach(note => {
+        NOTE_TYPE_LIST.forEach(type => {
+          if ( type === '#' && (note === 'E' || note === 'B') ) {
+            return
+          }
+          final.push({
+            name: `${note}${type}${octave}`,
+            note, octave, type
+          })
+        })
+      })
+    })
+
+    return final
+  }
+
+  const notesList = generateAllNoteList()
 
   const tryStart = () => {
     audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)()
@@ -34,6 +61,18 @@ import { GameOfLife } from '~/songGenerator/gameOfLife';
     
   }
 
+  const clear = () => {
+    isPlaying.value = false
+    stop()
+    gameMemory().clear()
+
+    for(let col = 0; col < GRID_LIMIT_COL; col++) {
+      for(let row = 0; row < GRID_LIMIT_ROW; row++) {
+        game.setCell(row, col, 0);
+      }
+    }
+  }
+
   const set = () => {
     
     if (isPlaying.value === false) {
@@ -47,9 +86,11 @@ import { GameOfLife } from '~/songGenerator/gameOfLife';
     .filter(entered => entered.value === 1)
     .forEach( filtered => {
       
-      play(convertCoordinatesToFrequency(
-        filtered.row, filtered.col
-      ), toneDuration.value);
+      play(
+        convertColumnToFrequency(filtered.col), 
+        toneDuration.value,
+        convertRowToVolume(filtered.row)
+      );
     })
       
     
@@ -68,22 +109,43 @@ import { GameOfLife } from '~/songGenerator/gameOfLife';
     return grid
   }
 
-  const convertCoordinatesToFrequency = (row, col) => {
-    const PLUS_TO_EXIT_ZERO = 1;
-
-    return ((row + PLUS_TO_EXIT_ZERO ) * (col + PLUS_TO_EXIT_ZERO)) * toneMultiplier.value
+  const convertColumnToFrequency = (col) => {
+    return notes[
+      notesList[col].note
+    ][
+      notesList[col].octave
+    ][
+      notesList[col].type === '' ? 'normal' : 'susten'
+    ]
   }
 
-  const play = (frequency, duration) => {
+  const convertRowToVolume = (row) => {
+    return ((row * 100 / GRID_LIMIT_ROW) / 100) - 0.1
+  }
+
+  const play = (frequency, duration, volume) => {
 
     if (oscilatorList.length > SIMULTANEOUS_TONES)  {
       return
     }
 
+    
     const oscillator = audioContext.createOscillator();
     oscillator.type = 'sine';
     oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-    oscillator.connect(audioContext.destination);
+    
+
+    const gainNode = audioContext.createGain()
+    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+
+    // Create a compressor node
+    const compressor = audioContext.createDynamicsCompressor();
+    compressor.threshold.setValueAtTime(-50, audioContext.currentTime);
+    compressor.ratio.setValueAtTime(17, audioContext.currentTime);
+    compressor.attack.setValueAtTime(0, audioContext.currentTime);
+    compressor.release.setValueAtTime(0.75, audioContext.currentTime);
+    
+    oscillator.connect(gainNode).connect(compressor).connect(audioContext.destination);
     oscillator.start();
     oscilatorList.push(oscillator)
 
@@ -130,8 +192,9 @@ import { GameOfLife } from '~/songGenerator/gameOfLife';
 <template>
 
   <div class="game">
-    <h1>Game of Life Sound Generator #1</h1>
-    <h5>Basic - Small - Each dot is a frequency</h5>
+    <h1>Game of Life Sound Generator #2</h1>
+    <h5>Basic - Small - Note vs Volume</h5>
+    <p>A escala de som começa com Dó, Dó sustenido, até o fim da lista. Quanto mais próximo do topo, mais alto o volume.</p>
     <div class="speed-zone">
       <label for="toneSlider">Duração do tom</label>
       <input type="range" id="toneSlider" v-model="toneDuration" min="50" max="500">
@@ -150,13 +213,22 @@ import { GameOfLife } from '~/songGenerator/gameOfLife';
       <button id="toggle" @click="tryStart()"> {{ isPlaying ? 'Pausar' : 'Tocar'}}</button>  
     </div>
 
-    
+    <div class="action-zone">
+      <label for="clear">Resetar o jogo</label>
+      <button id="clear" @click="clear()"> Resetar</button>  
+    </div>
 
+    
 
 
     <div v-for="(row, rowIndex) in grid" :key="rowIndex" class="row">
 
       <button 
+        class="button-tone"
+        v-if="rowIndex === 0"
+        v-for="note in notesList">{{ note.name }}</button>
+      <button 
+        v-if="rowIndex !== 0"
         v-for="(col, colIndex) in grid[rowIndex]" :key="colIndex"
         @click="changeValue(rowIndex, colIndex, grid[rowIndex][colIndex])"
         class="button-tone"
