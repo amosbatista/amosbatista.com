@@ -35,7 +35,7 @@ export const soundGeneratorPersistece = () => {
     if (!gameMemoryString || gameMemoryString?.length <= 0) {
       return []
     }
-    const gameMemory = gameMemoryString 
+    const gameMemory = typeof gameMemoryString === 'string' ? JSON.parse(gameMemoryString) : gameMemoryString
 
     return gameMemory
   }});
