@@ -5,7 +5,8 @@ import { notes } from '~/songGenerator/notes';
 
   const GRID_LIMIT_ROW = 24;
   const GRID_LIMIT_COL = 24;
-  const SIMULTANEOUS_TONES = 16;
+  const DEFAULT_FREQUENCY = 1;
+  const SMOOTH_INTERVAL = 0.6;
 
   const TONE_ON_VALUE = 1
 
@@ -24,6 +25,37 @@ import { notes } from '~/songGenerator/notes';
 
   let oscilatorList = []
   let lastOscilatorList = []
+
+  const oscilattorsGenerator = () => {
+    if (oscilatorList.length >= GRID_LIMIT_ROW - 1) {
+      return
+    }
+    audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)()
+
+    for (let index = 1; index <= GRID_LIMIT_ROW; index++) {
+      const oscillator = new OscillatorNode(audioContext, {
+        type: 'triangle',
+        frequency: DEFAULT_FREQUENCY,
+      })
+
+      const gainNode = new GainNode(audioContext, {
+        gain: 0
+      })
+      
+
+      oscillator
+      .connect(gainNode)
+      .connect(audioContext.destination)
+
+      oscillator.start()
+      oscilatorList.push({
+        oscillator,
+        gainNode,
+      })
+    }
+
+    // presetCompressor();
+  }
 
   const generateAllNoteList = () => {
     const final = []
@@ -85,11 +117,7 @@ import { notes } from '~/songGenerator/notes';
     if (isPlaying.value === false) {
       return
     }
-    if (oscilatorList.length > 0) {
-      return;
-    }
-    presetCompressor();
-    presetCompressor();
+    oscilattorsGenerator()
     const result = game.nextGeneration();
     result
       .filter(entered => entered.value === 1)
@@ -99,11 +127,12 @@ import { notes } from '~/songGenerator/notes';
         )
         return !playedBefore ? true : undefined
       })
-      .forEach( filtered => {
+      .forEach( (filtered, index) => {
         play(
           convertColumnToFrequency(filtered.col), 
           toneDuration.value,
-          convertRowToVolume(filtered.row)
+          convertRowToVolume(filtered.row),
+          index
         );
       })
     
@@ -145,48 +174,41 @@ import { notes } from '~/songGenerator/notes';
   }
 
   const convertRowToVolume = (row) => {
-    return ((row * 100 / GRID_LIMIT_ROW) / 100) - 0.1
+    return ((row * 100 / GRID_LIMIT_ROW) / 100)
   }
 
-  const play = (frequency, duration, volume) => {
-
-    if (oscilatorList.length > SIMULTANEOUS_TONES)  {
+  const play = (frequency, duration, volume, index) => {
+    if (!oscilatorList[index]) {
       return
     }
-
-    
-    const oscillator = audioContext.createOscillator();
-    oscillator.type = 'triangle';
-    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-    
-
-    const gainNode = audioContext.createGain()
-    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-
-    
-    
-    
-    oscillator
-    .connect(gainNode)
-    .connect(audioContext.destination)
-    
-
-    oscillator.start();
-    oscilatorList.push(oscillator)
-
+    oscilatorList[index].oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+    oscilatorList[index].gainNode.gain.setValueAtTime(volume, audioContext.currentTime, SMOOTH_INTERVAL);
     setTimeout(() => {
-      stop();
-    }, duration);
+      oscilatorList[index].gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    }, duration)
+    oscilatorList[index].gainNode.gain.setValueAtTime(0, audioContext.currentTime + duration);
+    
+    
+
   }
 
   const stop = ()=> {
     clearInterval(interval)  
 
-    oscilatorList.forEach(() => {
-      const oscillator = oscilatorList.pop()
-      oscillator.stop();
-      oscillator.disconnect()
+    oscilatorList.forEach((config) => {
+      config.gainNode.gain.setValueAtTime(0, audioContext.currentTime);
     })
+    /*oscilatorList.forEach(() => {
+      const config = oscilatorList.pop()
+
+      try{
+        config.oscillator.stop();
+      }
+      catch {
+        
+      }
+      config.oscillator.disconnect()
+    })*/
     
   }
 
