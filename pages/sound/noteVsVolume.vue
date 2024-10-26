@@ -23,6 +23,7 @@ import { notes } from '~/songGenerator/notes';
   let audioContext = undefined
 
   let oscilatorList = []
+  let lastOscilatorList = []
 
   const generateAllNoteList = () => {
     const final = []
@@ -46,6 +47,11 @@ import { notes } from '~/songGenerator/notes';
 
   const notesList = generateAllNoteList()
 
+  const snapShot = () => {
+    lastOscilatorList.forEach(cell=> {
+      gameMemory().set(cell.row, cell.col, cell.value)
+    })
+  }
   const tryStart = () => {
     audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)()
 
@@ -55,6 +61,7 @@ import { notes } from '~/songGenerator/notes';
       set()
     }
     else {
+      snapShot()
       stop()
     }
 
@@ -81,21 +88,39 @@ import { notes } from '~/songGenerator/notes';
     if (oscilatorList.length > 0) {
       return;
     }
+    presetCompressor();
+    presetCompressor();
     const result = game.nextGeneration();
     result
-    .filter(entered => entered.value === 1)
-    .forEach( filtered => {
-      
-      play(
-        convertColumnToFrequency(filtered.col), 
-        toneDuration.value,
-        convertRowToVolume(filtered.row)
-      );
-    })
-      
+      .filter(entered => entered.value === 1)
+      .filter(selected => {
+        const playedBefore = lastOscilatorList.find(
+          last => last.row === selected.row && last.col === selected.col && last.value === selected.value
+        )
+        return !playedBefore ? true : undefined
+      })
+      .forEach( filtered => {
+        play(
+          convertColumnToFrequency(filtered.col), 
+          toneDuration.value,
+          convertRowToVolume(filtered.row)
+        );
+      })
     
+    lastOscilatorList = result.splice(0);
     setTimeout(set, toneDuration.value);
     
+  }
+
+  const presetCompressor = () => {
+    // Create a compressor node
+    const compressor = new DynamicsCompressorNode(audioContext, {
+      threshold: -99,
+      ratio: 1,
+      attack: 0,
+      release: 0.9,
+    })
+    compressor.connect(audioContext.destination)
   }
 
   const createGrid = () => {
@@ -131,21 +156,21 @@ import { notes } from '~/songGenerator/notes';
 
     
     const oscillator = audioContext.createOscillator();
-    oscillator.type = 'sine';
+    oscillator.type = 'triangle';
     oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
     
 
     const gainNode = audioContext.createGain()
     gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
 
-    // Create a compressor node
-    const compressor = audioContext.createDynamicsCompressor();
-    compressor.threshold.setValueAtTime(-50, audioContext.currentTime);
-    compressor.ratio.setValueAtTime(17, audioContext.currentTime);
-    compressor.attack.setValueAtTime(0, audioContext.currentTime);
-    compressor.release.setValueAtTime(0.75, audioContext.currentTime);
     
-    oscillator.connect(gainNode).connect(compressor).connect(audioContext.destination);
+    
+    
+    oscillator
+    .connect(gainNode)
+    .connect(audioContext.destination)
+    
+
     oscillator.start();
     oscilatorList.push(oscillator)
 
@@ -155,7 +180,8 @@ import { notes } from '~/songGenerator/notes';
   }
 
   const stop = ()=> {
-    clearInterval(interval)
+    clearInterval(interval)  
+
     oscilatorList.forEach(() => {
       const oscillator = oscilatorList.pop()
       oscillator.stop();
@@ -174,11 +200,7 @@ import { notes } from '~/songGenerator/notes';
   const changeValue = (row, col, value) => {
     
     const newValue = value === TONE_ON_VALUE ? 0 : TONE_ON_VALUE
-    game.setCell(row, col, newValue)
-
-    gameMemory().set(row, col, newValue)
-
-    
+    game.setCell(row, col, newValue)  
   }
 
   
