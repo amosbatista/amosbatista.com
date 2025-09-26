@@ -47,6 +47,13 @@ export class GameOfLife {
     return this.grid;
   }
 
+  public getLimits() {
+    return {
+      cols: this.cols,
+      rows: this.rows
+    }
+  }
+
   public printGrid() {
     console.log(this.grid.value.map(row => row.join(' ')).join('\n'));
   }

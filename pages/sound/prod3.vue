@@ -2,6 +2,9 @@
 import { soundGeneratorPersistece } from '~/composables/soundGeneratorPersistence';
 import { GameOfLife } from '~/songGenerator/gameOfLife';
 import * as Tone from "tone";
+import { OrganismCreator } from '~/songGenerator/Organism/OrganismCreator';
+import { glider } from '~/songGenerator/Organism/predefs/glider';
+import { blinker } from '~/songGenerator/Organism/predefs/blinker';
 
   const GRID_LIMIT_ROW = 24;
   const GRID_LIMIT_COL = 24;
@@ -208,6 +211,23 @@ import * as Tone from "tone";
     )  
   }
 
+
+  const generateGlider = () => {
+    const creator = new OrganismCreator(game, TONE_ON_VALUE);
+
+    const organism = creator.GenerateFromOrganism(glider)
+
+    creator.GenerateFromOrganism(organism)
+  }
+
+  const generateBlinker = () => {
+    const creator = new OrganismCreator(game, TONE_ON_VALUE);
+
+    const organism = creator.GenerateFromOrganism(blinker)
+
+    creator.GenerateFromOrganism(organism)
+  }
+
   
   gameMemory().get().forEach(element => {
     game.setCell(element.row, element.col, 1);
@@ -245,6 +265,12 @@ import * as Tone from "tone";
       <button id="clear" @click="clear()"> Resetar</button>  
     </div>
 
+    <div class="creator">
+      <!-- <button @click="createBlinker()">blinker</button> -->
+      <button @click="generateGlider()">criar glider</button>
+
+      <button @click="generateBlinker()">criar blinker</button>
+    </div>
     
 
 
