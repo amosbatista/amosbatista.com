@@ -237,6 +237,9 @@ import * as Tone from "tone";
 </template>
 
 <style>
+  :root {
+    --dimensao-botoes: 25px;
+  }
   .game {
     width: 100%;
     display: flex;
@@ -251,12 +254,15 @@ import * as Tone from "tone";
     align-items: stretch;
     text-align: center;
   }
+  .row {
+    height: var(--dimensao-botoes);
+  }
 
   .button-tone {
     border: 0;
     margin: 0;
-    width: 25px;
-    height: 25px;
+    width: var(--dimensao-botoes);
+    height: var(--dimensao-botoes);
   }
   .on {
     background-color: #ccff00;

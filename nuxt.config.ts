@@ -12,6 +12,7 @@ export default defineNuxtConfig({
   },
   css: ['~/assets/css/main.css'],
   nitro: {
+    minify: false,
     prerender: {
       failOnError: false, 
     },

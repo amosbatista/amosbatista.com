@@ -3,7 +3,7 @@
     <div class="text-center">
       <h1>amosbatista.com</h1>
       <RouterLink to="/vis"><p>Generator - vis</p></RouterLink>
-      <RouterLink to="/sound"><p>Sound Generator - Game of Life</p></RouterLink>
+      <RouterLink to="/sound/prod3"><p>Sound Generator - Game of Life</p></RouterLink>
       <a :href="'mailto:amos.silva@gmail.com'"><p>amos.silva@gmail.com</p></a>
     </div>
   </div>

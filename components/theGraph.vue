@@ -174,4 +174,4 @@ import { NodesTypes } from '~/vis/graph.nodes.type';
   #graphContainer{
     height: 100%;
   }
-</style>
+</style>''
