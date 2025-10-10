@@ -4,7 +4,9 @@ export interface OrganismPredef {
   signature: string
   cellOff?: string,
   cellOn?: string
-  lineBreak?: '\n'
+  lineBreak?: '\n',
+  unique?: boolean
+  name?: string
 }
 
 export interface OrganismDelimited extends OrganismPredef {
@@ -33,7 +35,7 @@ export interface OrganismCreated {
 
 export class OrganismCreator {
 
-  BASE_CELL_OFF = '-';
+  BASE_CELL_OFF = '.';
   BASE_CELL_ON = 'o';
   BASE_LINE_SPLIT = '\n';
 
@@ -78,13 +80,16 @@ export class OrganismCreator {
   }
 
   SeparateSignatureLine(organism: OrganismPredef): string[] {
+    if(!organism ){
+      return [];
+    }
     return this.CleanSignatureArray(
       organism.signature.split(organism.lineBreak || this.BASE_LINE_SPLIT)
     )
   }
 
   CleanSignatureArray(signaturePostSplit: string[]): string[]{
-    return signaturePostSplit.map( line => line.trim()).filter(line => line !== '')
+    return signaturePostSplit.map( line => line.trim())
   }
   
 
